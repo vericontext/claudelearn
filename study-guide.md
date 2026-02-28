@@ -73,24 +73,29 @@
   사용자에게 한국어로 친근하게 인사하세요.
   ```
 - [ ] `/hello` 실행해서 동작 확인
-- [ ] 실용적 스킬 만들기: 코드 리뷰, 커밋 메시지, PR 작성 등
+- [ ] 실전 스킬 만들기 — note.md 실전 예제 참고:
+  - `/ship`: staged/unstaged diff 읽어 자동 커밋 + PR 생성
+  - `/review [pr-number]`: PR diff/댓글 분석 후 리뷰 코멘트
 - [ ] `!`command`` 동적 컨텍스트 주입 사용해보기
 - [ ] `$ARGUMENTS` 인수 전달 사용해보기
 - [ ] `disable-model-invocation: true` vs 기본 차이 확인
 
-**체크포인트**: 일상 작업에 스킬 3개 이상 활용
+**체크포인트**: `/ship`으로 실제 커밋 + PR 생성까지 한 커맨드에 완료
 
 ### 2-2. Hooks
 
 **읽기**: note.md 섹션 6
 
 **실습**:
-- [ ] 알림 훅 설정 (macOS 알림 예제 그대로 복붙)
+- [ ] 파일 수정 시 테스트 자동 실행 (`PostToolUse` + `Edit|Write` matcher)
+  - Claude가 파일 고칠 때마다 테스트 결과가 컨텍스트에 자동 주입됨
+- [ ] 작업 완료 시 자동 검증 (`Stop` + `type: agent`)
+  - 응답 완료마다 테스트 돌려서 실패 시 Claude에게 피드백
 - [ ] 자동 포맷 훅 설정 (prettier/eslint 연동)
 - [ ] Exit code 2로 차단하는 훅 만들어보기 (보호 파일)
 - [ ] 압축 후 리마인더 훅 (`SessionStart` + `compact` matcher)
 
-**체크포인트**: 편집 후 자동 포맷팅, 보호 파일 차단이 동작
+**체크포인트**: 파일 수정 → 테스트 자동 실행 → 실패 시 Claude 자동 수정까지 동작
 
 ### 2-3. MCP
 
@@ -103,10 +108,10 @@
   claude mcp add --transport http github https://api.githubcopilot.com/mcp/
   ```
 - [ ] `claude mcp list`로 확인
-- [ ] MCP 도구를 실제 작업에서 사용해보기
+- [ ] `@github:issue://번호` 형식으로 이슈 직접 참조해서 구현 요청해보기
 - [ ] `.mcp.json`으로 프로젝트 공유 설정 해보기
 
-**체크포인트**: 외부 서비스 데이터를 Claude 대화에서 직접 활용
+**체크포인트**: `@서비스:리소스://ID` 형식으로 외부 데이터를 대화에서 직접 활용
 
 ---
 
@@ -121,10 +126,14 @@
 **실습**:
 - [ ] 커스텀 에이전트 1개 만들기: `.claude/agents/reviewer.md`
 - [ ] `tools`, `model`, `maxTurns` 프론트매터 설정 실험
+- [ ] 병렬 리뷰 에이전트 3개 만들기 — note.md 실전 예제 참고:
+  - `security-reviewer` (opus) — OWASP Top 10 보안 분석
+  - `perf-reviewer` (sonnet) — N+1 쿼리/메모리 누수 탐지
+  - `test-validator` (haiku) — 테스트 커버리지 검증
 - [ ] 포그라운드 vs 백그라운드 실행 차이 체험
 - [ ] `memory: user` 설정으로 세션 간 학습 확인
 
-**체크포인트**: 메인 컨텍스트 오염 없이 서브에이전트로 대규모 작업 처리
+**체크포인트**: "보안/성능/테스트 동시에 리뷰해줘" 한 문장으로 3개 에이전트 병렬 실행
 
 ### 3-2. Headless / Agent SDK
 

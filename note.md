@@ -466,6 +466,48 @@ my-skill/
 export SLASH_COMMAND_TOOL_CHAR_BUDGET=32000
 ```
 
+### 실전 예제
+
+#### `/ship` — 커밋 + PR 한 커맨드로
+
+```yaml
+---
+name: ship
+description: 현재 변경사항을 커밋하고 PR을 생성. 작업 완료 시 사용.
+---
+## 현재 변경사항
+!`git diff --staged`
+!`git diff`
+
+위 변경사항을 분석하여:
+1. 변경 내용을 요약한 커밋 메시지 작성 (영어, 50자 이내)
+2. git add -A && git commit 실행
+3. 한국어로 PR 제목/본문 작성
+4. gh pr create 실행
+```
+
+#### `/review` — PR diff 읽고 리뷰 댓글 작성
+
+```yaml
+---
+name: review
+description: PR 코드 리뷰. /review 123 형식으로 PR 번호 전달.
+argument-hint: "[pr-number]"
+---
+## PR #$ARGUMENTS 리뷰 요청
+
+변경 파일:
+!`gh pr diff $ARGUMENTS --name-only`
+
+전체 diff:
+!`gh pr diff $ARGUMENTS`
+
+기존 댓글:
+!`gh pr view $ARGUMENTS --comments`
+
+위 내용을 바탕으로 버그/보안/성능/개선점을 분석하여 PR에 코멘트 달아주세요.
+```
+
 ---
 
 ## 5. Subagents
@@ -597,6 +639,52 @@ export CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=50
 - 특정 도구/권한 제한이 필요할 때
 - 독립적으로 완결되는 작업일 때
 
+### 실전 예제: 멀티 에이전트 병렬 PR 리뷰
+
+에이전트 파일 3개를 만들어두면, 하나의 요청으로 동시에 실행됨.
+
+```yaml
+# .claude/agents/security-reviewer.md
+---
+name: security-reviewer
+description: 보안 취약점 전문 리뷰어. 코드 변경 후 보안 검토 필요 시 호출.
+tools: Read, Grep, Glob
+model: opus
+---
+OWASP Top 10 기준으로 코드 취약점을 분석하세요.
+SQL 인젝션, XSS, 인증/인가 이슈에 특히 집중하세요.
+```
+
+```yaml
+# .claude/agents/perf-reviewer.md
+---
+name: perf-reviewer
+description: 성능 최적화 전문가. N+1 쿼리, 메모리 누수, 불필요한 렌더링 탐지.
+tools: Read, Grep, Glob
+model: sonnet
+---
+성능 병목 지점을 분석하세요.
+N+1 쿼리, 불필요한 루프, 캐싱 누락, 메모리 낭비를 집중적으로 찾으세요.
+```
+
+```yaml
+# .claude/agents/test-validator.md
+---
+name: test-validator
+description: 테스트 커버리지 검토. 새 코드에 테스트가 충분한지 확인.
+tools: Read, Grep, Glob, Bash
+model: haiku
+---
+변경된 코드에 대응하는 테스트가 충분한지 확인하세요.
+엣지 케이스와 에러 핸들링 테스트 누락 여부를 중점적으로 체크하세요.
+```
+
+사용법:
+```
+이 PR 보안/성능/테스트 커버리지 세 관점으로 동시에 리뷰해줘
+→ security-reviewer + perf-reviewer + test-validator 병렬 실행됨
+```
+
 ---
 
 ## 6. Hooks
@@ -659,7 +747,66 @@ export CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=50
 
 ### 실용 예제
 
-#### 1. 편집 후 자동 포맷
+#### 1. 파일 수정 시 테스트 자동 실행 (Claude가 결과 즉시 인지)
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd $CLAUDE_PROJECT_DIR && npm test --passWithNoTests 2>&1 | tail -20"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+Claude가 파일 수정할 때마다 테스트 결과가 자동으로 컨텍스트에 주입됨.
+테스트 실패하면 Claude가 바로 인지하고 자동 수정.
+
+#### 2. 작업 완료 시 자동 검증 (agent 타입)
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "agent",
+            "prompt": "Run npm test. If any tests fail, report exactly what needs to be fixed.",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+Claude 응답 완료될 때마다 테스트 돌려서 실패하면 Claude에게 피드백 전달.
+
+#### 3. 보호 파일 편집 차단
+
+```bash
+#!/bin/bash
+INPUT=$(cat)
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
+PROTECTED_PATTERNS=(".env" "package-lock.json" ".git/")
+for pattern in "${PROTECTED_PATTERNS[@]}"; do
+  if [[ "$FILE_PATH" == *"$pattern"* ]]; then
+    echo "Blocked: $FILE_PATH matches protected pattern '$pattern'" >&2
+    exit 2
+  fi
+done
+exit 0
+```
+
+#### 4. 편집 후 자동 포맷
 
 ```json
 {
@@ -679,23 +826,7 @@ export CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=50
 }
 ```
 
-#### 2. 보호 파일 편집 차단
-
-```bash
-#!/bin/bash
-INPUT=$(cat)
-FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
-PROTECTED_PATTERNS=(".env" "package-lock.json" ".git/")
-for pattern in "${PROTECTED_PATTERNS[@]}"; do
-  if [[ "$FILE_PATH" == *"$pattern"* ]]; then
-    echo "Blocked: $FILE_PATH matches protected pattern '$pattern'" >&2
-    exit 2
-  fi
-done
-exit 0
-```
-
-#### 3. 압축 후 컨텍스트 재주입
+#### 5. 압축 후 컨텍스트 재주입
 
 ```json
 {
@@ -715,7 +846,7 @@ exit 0
 }
 ```
 
-#### 4. macOS 알림
+#### 6. macOS 알림
 
 ```json
 {
@@ -727,45 +858,6 @@ exit 0
           {
             "type": "command",
             "command": "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"'"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-#### 5. Prompt 기반 검증 (Stop 시)
-
-```json
-{
-  "hooks": {
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "Check if all tasks are complete. If not, respond with {\"ok\": false, \"reason\": \"what remains to be done\"}."
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-#### 6. Agent 기반 검증 (Stop 시)
-
-```json
-{
-  "hooks": {
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "agent",
-            "prompt": "Verify that all unit tests pass. Run the test suite and check the results. $ARGUMENTS",
-            "timeout": 120
           }
         ]
       }
@@ -799,11 +891,20 @@ exit 0
 - 서브에이전트별 개별 MCP 서버 설정 가능
 
 ### 활용 예시
-- "JIRA issue ENG-4521에 설명된 기능 구현"
-- "Sentry와 Statsig 모니터링 데이터 분석"
-- "PostgreSQL에서 이메일 조회"
-- "새 Figma 디자인 기반으로 템플릿 업데이트"
-- "사용자 초대 Gmail 초안 작성"
+
+```
+# GitHub 이슈 번호 하나로 구현까지
+@github:issue://234 이 이슈 구현해줘
+
+# 자연어로 DB 쿼리 (postgres MCP 연결 시)
+어제 가입했는데 아직 온보딩 미완료한 사용자 몇 명이야?
+
+# Jira + GitHub + Slack 원스톱
+@jira:issue://ENG-1234 보고 구현 후 PR 만들고 @slack:channel://eng-team 에 알려줘
+
+# MCP 프롬프트를 슬래시 커맨드로
+/mcp__github__create_issue "로그인 버튼 클릭 시 500 에러" high
+```
 
 ### 3가지 전송 방식
 
