@@ -2100,4 +2100,65 @@ CI/CD에서 실행하고 싶다
 | Agent Teams | 다중 독립 세션 조율 | 병렬 리서치, 경쟁 가설 | 보안/성능/테스트 동시 리뷰 |
 | MCP | 외부 서비스 연결 | 외부 데이터/액션 | DB 쿼리, Slack 포스트 |
 | Hook | 이벤트 기반 스크립트 | 예측 가능한 자동화 | 편집 후 ESLint 실행 |
+
+---
+
+## 실습: GitHub Actions + CLAUDE_CODE_OAUTH_TOKEN 설정 (2026-02-28)
+
+### 배경
+
+`ANTHROPIC_API_KEY` 대신 `CLAUDE_CODE_OAUTH_TOKEN`(Claude.ai 계정 OAuth)으로 인증하는 방식으로 설정.
+
+### 최종 작동 워크플로우
+
+```yaml
+name: Claude Code
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  issues:
+    types: [opened, assigned]
+
+jobs:
+  claude:
+    if: |
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'issues' && contains(github.event.issue.body, '@claude'))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write   # ← CLAUDE_CODE_OAUTH_TOKEN 사용 시 필수
+    steps:
+      - uses: actions/checkout@v4
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: "--max-turns 10"
+```
+
+### 트러블슈팅
+
+| 에러 | 원인 | 해결 |
+|------|------|------|
+| `Unable to get ACTIONS_ID_TOKEN_REQUEST_URL` | `id-token: write` 권한 누락 | permissions에 `id-token: write` 추가 |
+| `Bad credentials` | OAuth 토큰 미설정 또는 빈 값 | GitHub Secrets에 `CLAUDE_CODE_OAUTH_TOKEN` 등록 확인 |
+| `issue_comment` 이벤트가 구 워크플로우 실행 | main 브랜치 워크플로우 기준으로 트리거됨 | 수정 사항을 반드시 main에 push 후 테스트 |
+
+### 인증 방식 비교
+
+| 방식 | 시크릿 이름 | 추가 권한 | 특징 |
+|------|------------|-----------|------|
+| API 키 | `ANTHROPIC_API_KEY` | 불필요 | 직접 API 사용 |
+| OAuth 토큰 | `CLAUDE_CODE_OAUTH_TOKEN` | `id-token: write` 필요 | Claude.ai 계정 연동 |
+
+### 핵심 교훈
+
+- `issue_comment` 이벤트는 **main 브랜치** 워크플로우를 사용 → 수정 후 main에 먼저 반영해야 테스트 가능
+- `CLAUDE_CODE_OAUTH_TOKEN` 사용 시 OIDC 토큰이 필요하므로 `id-token: write` 필수
+- `.claude/settings.json`의 deny 규칙(`git push *`)은 Claude가 직접 push하는 것을 막음 → 의도한 보호 장치
 | Plugin | 패키징 & 배포 | 공유, 버전 관리 | 팀 공통 도구 모음 |
