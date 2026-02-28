@@ -9,7 +9,6 @@
     ],
     "deny": [
       "Bash(rm -rf *)",
-      "Bash(git push *)",
       "Edit(//.*note-reference.md)"
     ]
   },
