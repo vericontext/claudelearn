@@ -12,5 +12,40 @@
       "Bash(git push *)",
       "Edit(//.*note-reference.md)"
     ]
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"'"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // empty' | xargs -I{} sh -c 'case \"{}\" in *note-reference.md) echo \"Blocked: note-reference.md is read-only\" >&2; exit 2;; esac; exit 0'"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Reminder: note-reference.md는 읽기 전용입니다. note.md를 작업용으로 사용하세요. 문서는 한국어로 작성합니다.'"
+          }
+        ]
+      }
+    ]
   }
 }
