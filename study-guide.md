@@ -22,11 +22,11 @@
 **읽기**: note.md 섹션 1
 
 **실습**:
-- [ ] 현재 프로젝트에 `CLAUDE.md` 작성 (5줄 이하로 시작)
-- [ ] `~/.claude/CLAUDE.md` 개인 전역 설정 작성
-- [ ] `/init` 실행해서 자동 생성 결과 확인
-- [ ] `.claude/rules/` 디렉토리에 경로별 규칙 1개 만들어보기
-- [ ] `/memory` 실행해서 Auto Memory 상태 확인
+- [x] 현재 프로젝트에 `CLAUDE.md` 작성 (5줄 이하로 시작)
+- [x] `~/.claude/CLAUDE.md` 개인 전역 설정 작성
+- [x] `/init` 실행해서 자동 생성 결과 확인
+- [x] `.claude/rules/` 디렉토리에 경로별 규칙 1개 만들어보기
+- [x] `/memory` 실행해서 Auto Memory 상태 확인
 
 **체크포인트**: 새 세션 시작 시 Claude가 내 규칙을 따르는지 확인
 
@@ -35,9 +35,9 @@
 **읽기**: note.md 섹션 2
 
 **실습**:
-- [ ] 현재 권한 모드 확인 (`default`인지)
-- [ ] `.claude/settings.json`에 자주 쓰는 명령 allow 규칙 추가
-- [ ] deny 규칙 1개 추가 (예: `Bash(rm -rf *)`)
+- [x] 현재 권한 모드 확인 (`default`인지)
+- [x] `.claude/settings.json`에 자주 쓰는 명령 allow 규칙 추가
+- [x] deny 규칙 1개 추가 (예: `Bash(rm -rf *)`)
 - [ ] `acceptEdits` 모드로 전환해보고 차이 체감
 
 **체크포인트**: 허용/거부가 의도대로 동작하는지 확인
@@ -47,9 +47,9 @@
 **읽기**: note.md 섹션 3
 
 **실습**:
-- [ ] 다음 작업에서 "탐색 → 계획 → 구현 → 커밋" 4단계 의식적으로 적용
-- [ ] `/clear` 습관화 — 작업 전환 시 반드시 실행
-- [ ] 나쁜 프롬프트 vs 좋은 프롬프트 비교 테이블 보고, 다음 프롬프트 작성 시 적용
+- [x] 다음 작업에서 "탐색 → 계획 → 구현 → 커밋" 4단계 의식적으로 적용
+- [x] `/clear` 습관화 — 작업 전환 시 반드시 실행
+- [x] 나쁜 프롬프트 vs 좋은 프롬프트 비교 테이블 보고, 다음 프롬프트 작성 시 적용
 
 **체크포인트**: 한 세션에서 컨텍스트 오염 없이 작업 완료
 
@@ -64,7 +64,7 @@
 **읽기**: note.md 섹션 4
 
 **실습**:
-- [ ] 간단한 스킬 1개 만들기: `.claude/skills/hello/SKILL.md`
+- [x] 간단한 스킬 1개 만들기: `.claude/skills/hello/SKILL.md`
   ```yaml
   ---
   name: hello
@@ -72,12 +72,12 @@
   ---
   사용자에게 한국어로 친근하게 인사하세요.
   ```
-- [ ] `/hello` 실행해서 동작 확인
-- [ ] 실전 스킬 만들기 — note.md 실전 예제 참고:
+- [x] `/hello` 실행해서 동작 확인
+- [x] 실전 스킬 만들기 — note.md 실전 예제 참고:
   - `/ship`: staged/unstaged diff 읽어 자동 커밋 + PR 생성
   - `/review [pr-number]`: PR diff/댓글 분석 후 리뷰 코멘트
-- [ ] `!`command`` 동적 컨텍스트 주입 사용해보기
-- [ ] `$ARGUMENTS` 인수 전달 사용해보기
+- [x] `!`command`` 동적 컨텍스트 주입 사용해보기
+- [x] `$ARGUMENTS` 인수 전달 사용해보기
 - [ ] `disable-model-invocation: true` vs 기본 차이 확인
 
 **체크포인트**: `/ship`으로 실제 커밋 + PR 생성까지 한 커맨드에 완료
@@ -87,13 +87,13 @@
 **읽기**: note.md 섹션 6
 
 **실습**:
-- [ ] 파일 수정 시 테스트 자동 실행 (`PostToolUse` + `Edit|Write` matcher)
+- [x] 파일 수정 시 테스트 자동 실행 (`PostToolUse` + `Edit|Write` matcher)
   - Claude가 파일 고칠 때마다 테스트 결과가 컨텍스트에 자동 주입됨
 - [ ] 작업 완료 시 자동 검증 (`Stop` + `type: agent`)
   - 응답 완료마다 테스트 돌려서 실패 시 Claude에게 피드백
 - [ ] 자동 포맷 훅 설정 (prettier/eslint 연동)
-- [ ] Exit code 2로 차단하는 훅 만들어보기 (보호 파일)
-- [ ] 압축 후 리마인더 훅 (`SessionStart` + `compact` matcher)
+- [x] Exit code 2로 차단하는 훅 만들어보기 (보호 파일)
+- [x] 압축 후 리마인더 훅 (`SessionStart` + `compact` matcher)
 
 **체크포인트**: 파일 수정 → 테스트 자동 실행 → 실패 시 Claude 자동 수정까지 동작
 
@@ -102,14 +102,14 @@
 **읽기**: note.md 섹션 7
 
 **실습**:
-- [ ] `/mcp` 실행해서 현재 상태 확인
-- [ ] HTTP MCP 서버 1개 추가해보기 (GitHub, Notion 등 이미 쓰는 서비스)
+- [x] `/mcp` 실행해서 현재 상태 확인
+- [x] HTTP MCP 서버 1개 추가해보기 (GitHub, Notion 등 이미 쓰는 서비스)
   ```bash
   claude mcp add --transport http github https://api.githubcopilot.com/mcp/
   ```
-- [ ] `claude mcp list`로 확인
+- [x] `claude mcp list`로 확인
 - [ ] `@github:issue://번호` 형식으로 이슈 직접 참조해서 구현 요청해보기
-- [ ] `.mcp.json`으로 프로젝트 공유 설정 해보기
+- [x] `.mcp.json`으로 프로젝트 공유 설정 해보기
 
 **체크포인트**: `@서비스:리소스://ID` 형식으로 외부 데이터를 대화에서 직접 활용
 
@@ -124,9 +124,9 @@
 **읽기**: note.md 섹션 5
 
 **실습**:
-- [ ] 커스텀 에이전트 1개 만들기: `.claude/agents/reviewer.md`
+- [x] 커스텀 에이전트 1개 만들기: `.claude/agents/reviewer.md`
 - [ ] `tools`, `model`, `maxTurns` 프론트매터 설정 실험
-- [ ] 병렬 리뷰 에이전트 3개 만들기 — note.md 실전 예제 참고:
+- [x] 병렬 리뷰 에이전트 3개 만들기 — note.md 실전 예제 참고:
   - `security-reviewer` (opus) — OWASP Top 10 보안 분석
   - `perf-reviewer` (sonnet) — N+1 쿼리/메모리 누수 탐지
   - `test-validator` (haiku) — 테스트 커버리지 검증
@@ -171,9 +171,9 @@
 
 **실습**:
 - [ ] GitHub Actions: `/install-github-app` 실행
-- [ ] 기본 워크플로우 `.github/workflows/claude.yml` 배포
+- [x] 기본 워크플로우 `.github/workflows/claude.yml` 배포
 - [ ] PR에서 `@claude` 멘션 테스트
-- [ ] 커스텀 프롬프트로 자동 리뷰 설정
+- [x] 커스텀 프롬프트로 자동 리뷰 설정
 
 ### 4-2. Slack 통합
 

@@ -5,7 +5,9 @@
       "Bash(ls *)",
       "Bash(git status *)",
       "Bash(git log *)",
-      "Bash(git diff *)"
+      "Bash(git diff *)",
+      "Bash(gh pr diff *)",
+      "Bash(gh pr view *)"
     ],
     "deny": [
       "Bash(rm -rf *)",
@@ -31,6 +33,17 @@
           {
             "type": "command",
             "command": "jq -r '.tool_input.file_path // empty' | xargs -I{} sh -c 'case \"{}\" in *note-reference.md) echo \"Blocked: note-reference.md is read-only\" >&2; exit 2;; esac; exit 0'"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '✓ 파일 수정됨: '$(date '+%H:%M:%S')"
           }
         ]
       }

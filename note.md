@@ -592,13 +592,63 @@ claude --agents '{
 | `background` | 아니오 | `true`면 항상 백그라운드 실행 |
 | `isolation` | 아니오 | `worktree`로 git worktree 격리 |
 
-### Skills 프리로드
+### tools 필드 상세
+
+생략하면 부모 Claude의 도구 전체 상속. 명시하면 allowlist로 동작.
+
 ```yaml
-skills:
-  - api-conventions
-  - error-handling-patterns
+# 읽기 전용 (파일 탐색만)
+tools: Read, Grep, Glob
+
+# 쓰기 포함
+tools: Read, Grep, Glob, Edit, Write
+
+# 셸 실행 포함
+tools: Read, Grep, Glob, Edit, Write, Bash
+
+# 특정 Bash 명령만 허용
+tools: Read, Bash(git commit *), Bash(npm test)
+
+# MCP 도구 포함
+tools: Read, Grep, Glob, Bash, mcp__github
+
+# 특정 에이전트 스폰만 허용
+tools: Task(worker, researcher), Read, Bash
 ```
-에이전트 시작 시 스킬 전체 내용이 컨텍스트에 주입됨.
+
+`disallowedTools`로 특정 도구만 제외:
+```yaml
+disallowedTools: Bash, Write  # 나머지는 전부 허용
+```
+
+### Skills 프리로드
+
+에이전트 시작 시 지정한 스킬의 **전체 내용이 컨텍스트에 자동 주입**됨.
+
+```yaml
+---
+name: my-agent
+description: ...
+tools: Read, Grep, Glob
+skills:
+  - ship      # .claude/skills/ship/SKILL.md 전체 주입
+  - review    # .claude/skills/review/SKILL.md 전체 주입
+---
+시스템 프롬프트...
+```
+
+활용 예: `security-reviewer`가 PR diff 읽는 방법(review 스킬)을 미리 알고 있게 하기:
+```yaml
+---
+name: security-reviewer
+description: 보안 취약점 전문 리뷰어
+tools: Read, Grep, Glob
+model: opus
+skills:
+  - review
+---
+OWASP Top 10 기준으로 분석하세요.
+```
 
 ### Persistent Memory
 ```yaml
@@ -1211,6 +1261,87 @@ Hooks 마이그레이션 — `.claude/settings.json`에서 `my-plugin/hooks/hook
   }
 }
 ```
+
+### 공식 마켓플레이스 플러그인 목록
+
+`/plugin` → Discover 탭 또는 아래 명령어로 설치:
+```bash
+/plugin install 플러그인명@claude-plugins-official
+```
+
+#### Code Intelligence (LSP) — 언어별 실시간 오류 감지
+
+설치하면 Claude가 파일 수정 후 **타입 에러/import 오류를 자동 감지**해 같은 턴에 바로 수정.
+
+| 플러그인 | 언어 | 필요 바이너리 |
+|---------|------|-------------|
+| `typescript-lsp` | TypeScript/JavaScript | `typescript-language-server` |
+| `pyright-lsp` | Python | `pyright-langserver` |
+| `rust-analyzer-lsp` | Rust | `rust-analyzer` |
+| `gopls-lsp` | Go | `gopls` |
+| `jdtls-lsp` | Java | `jdtls` |
+| `kotlin-lsp` | Kotlin | `kotlin-language-server` |
+| `clangd-lsp` | C/C++ | `clangd` |
+| `swift-lsp` | Swift | `sourcekit-lsp` |
+| `php-lsp` | PHP | `intelephense` |
+
+#### External Integrations (MCP 번들)
+
+수동 MCP 설정 없이 바로 연결:
+
+| 카테고리 | 플러그인 |
+|---------|---------|
+| 소스 컨트롤 | `github`, `gitlab` |
+| 프로젝트 관리 | `atlassian` (Jira+Confluence), `asana`, `linear`, `notion` |
+| 디자인 | `figma` |
+| 인프라 | `vercel`, `firebase`, `supabase` |
+| 커뮤니케이션 | `slack` |
+| 모니터링 | `sentry` |
+
+#### Development Workflows
+
+| 플러그인 | 설명 |
+|---------|------|
+| `commit-commands` | git 커밋/푸시/PR 워크플로우 |
+| `pr-review-toolkit` | PR 리뷰 전용 에이전트 |
+| `agent-sdk-dev` | Claude Agent SDK 개발 도구 |
+| `plugin-dev` | 플러그인 제작 도구 |
+
+#### Output Styles
+
+| 플러그인 | 설명 |
+|---------|------|
+| `explanatory-output-style` | 코드 선택 이유를 함께 설명하는 모드 |
+| `learning-output-style` | 학습자용 인터랙티브 모드 |
+
+### 마켓플레이스 관리
+
+```bash
+# 공식 마켓플레이스는 자동 등록. 추가 마켓플레이스:
+/plugin marketplace add anthropics/claude-code   # GitHub repo
+/plugin marketplace add https://example.com/marketplace.json
+
+# 목록 / 업데이트 / 제거
+/plugin marketplace list
+/plugin marketplace update marketplace-name
+/plugin marketplace remove marketplace-name
+```
+
+### 플러그인 관리
+
+```bash
+/plugin install typescript-lsp@claude-plugins-official
+/plugin install typescript-lsp@claude-plugins-official --scope project  # 팀 공유
+
+/plugin disable plugin-name@marketplace-name
+/plugin enable  plugin-name@marketplace-name
+/plugin uninstall plugin-name@marketplace-name
+```
+
+스코프:
+- `user` (기본) — 내 모든 프로젝트
+- `project` — 팀 공유 (`.claude/settings.json`에 기록)
+- `local` — 이 프로젝트만, 비공유
 
 ---
 
