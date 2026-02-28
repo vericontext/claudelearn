@@ -1,67 +1,67 @@
 #!/bin/bash
 # =============================================
-# Phase 3-2: Headless / Agent SDK 실습 스크립트
+# Phase 3-2: Headless / Agent SDK practice script
 # =============================================
-# 각 예제를 하나씩 실행해보세요 (전체 실행 X)
-# 사용법: 아래 예제를 복사해서 터미널에 붙여넣기
+# Run examples one at a time (do not run all at once)
+# Usage: copy an example below and paste into terminal
 
 # -------------------------------------------
-# 실습 1: 기본 headless + JSON 출력
+# Exercise 1: Basic headless + JSON output
 # -------------------------------------------
 
-# 텍스트 출력 (기본)
-claude -p "이 프로젝트의 파일 구조를 설명해줘" --output-format text
+# Text output (default)
+claude -p "Describe the file structure of this project" --output-format text
 
-# JSON 출력 (메타데이터 포함)
-claude -p "이 프로젝트의 파일 구조를 설명해줘" --output-format json
+# JSON output (with metadata)
+claude -p "Describe the file structure of this project" --output-format json
 
-# JSON에서 결과만 추출
-claude -p "이 프로젝트의 파일 구조를 설명해줘" --output-format json | jq -r '.result'
+# Extract result field from JSON
+claude -p "Describe the file structure of this project" --output-format json | jq -r '.result'
 
 # -------------------------------------------
-# 실습 2: --allowedTools 자동 승인
+# Exercise 2: --allowedTools auto-approve
 # -------------------------------------------
 
-# 읽기 도구만 허용 (승인 프롬프트 없이 실행)
-claude -p "note.md에서 MCP 섹션을 찾아서 요약해줘" \
+# Allow read-only tools (run without approval prompts)
+claude -p "Find the MCP section in note.md and summarize it" \
   --allowedTools "Read,Grep,Glob"
 
-# git 명령 자동 승인
-claude -p "최근 커밋 5개를 분석하고 패턴을 설명해줘" \
+# Auto-approve git commands
+claude -p "Analyze the last 5 commits and describe the pattern" \
   --allowedTools "Bash(git log *),Bash(git diff *),Read"
 
 # -------------------------------------------
-# 실습 3: Unix 파이프 패턴
+# Exercise 3: Unix pipe patterns
 # -------------------------------------------
 
-# git diff를 Claude에게 분석 요청
-git log --oneline -5 | claude -p "이 커밋 히스토리를 분석하고 프로젝트 진행 상황을 설명해줘"
+# Ask Claude to analyze git log
+git log --oneline -5 | claude -p "Analyze this commit history and describe the project progress"
 
-# 파일 내용을 파이프로 전달
-cat study-guide.md | claude -p "이 학습 가이드에서 아직 완료하지 않은 항목을 정리해줘"
-
-# -------------------------------------------
-# 실습 4: 세션 이어가기
-# -------------------------------------------
-
-# 첫 번째 요청
-claude -p "note.md의 Skills 섹션을 분석해줘" --output-format text
-
-# 이전 세션 이어서 (--continue)
-claude -p "방금 분석한 내용 중 가장 중요한 3가지를 정리해줘" --continue
-
-# 특정 세션 재개 (session_id 저장 후 사용)
-# session_id=$(claude -p "프로젝트 분석 시작" --output-format json | jq -r '.session_id')
-# claude -p "분석 계속해줘" --resume "$session_id"
+# Pipe file content
+cat study-guide.md | claude -p "List the incomplete items in this study guide"
 
 # -------------------------------------------
-# 실습 5: 실용 스크립트 — 노트 섹션 요약기
+# Exercise 4: Continue a session
 # -------------------------------------------
 
-# 아래 함수를 .zshrc나 .bashrc에 추가하면 편리합니다
-# 사용법: note-summary hooks
+# First request
+claude -p "Analyze the Skills section in note.md" --output-format text
+
+# Continue previous session (--continue)
+claude -p "Summarize the 3 most important points from that analysis" --continue
+
+# Resume specific session (save session_id first)
+# session_id=$(claude -p "Start project analysis" --output-format json | jq -r '.session_id')
+# claude -p "Continue the analysis" --resume "$session_id"
+
+# -------------------------------------------
+# Exercise 5: Practical script — note section summarizer
+# -------------------------------------------
+
+# Add the function below to .zshrc or .bashrc
+# Usage: note_summary hooks
 note_summary() {
   local topic="${1:?Usage: note_summary <topic>}"
   grep -A 100 "## .*${topic}" note.md | head -50 | \
-    claude -p "이 내용을 3줄로 요약해줘. 한국어로." --output-format text
+    claude -p "Summarize this in 3 lines." --output-format text
 }

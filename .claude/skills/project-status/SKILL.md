@@ -1,22 +1,22 @@
 ---
 name: project-status
-description: 프로젝트의 현재 git 상태와 파일 구조를 요약하는 스킬
+description: Summarize the current git status and file structure of the project
 ---
 
-## 프로젝트 현황 리포트
+## Project Status Report
 
-아래 동적 컨텍스트를 기반으로 프로젝트 현황을 한국어로 요약하세요.
+Summarize the project status based on the dynamic context below.
 
-### Git 상태
+### Git Status
 !`git status --short`
 
-### 최근 커밋
+### Recent Commits
 !`git log --oneline -5`
 
-### 파일 구조
+### File Structure
 !`find . -not -path './.git/*' -type f | head -20`
 
-위 정보를 바탕으로:
-1. 현재 브랜치와 커밋 상태
-2. 변경/추가된 파일 요약
-3. 다음 할 일 제안
+Based on the above:
+1. Current branch and commit status
+2. Summary of changed/added files
+3. Suggested next steps

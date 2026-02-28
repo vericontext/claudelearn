@@ -2,8 +2,8 @@
 paths:
   - "*.md"
 ---
-# 마크다운 문서 규칙
+# Markdown Document Rules
 
-- 테이블은 한국어 헤더를 사용합니다
-- 코드 블록에는 반드시 언어 태그를 붙입니다 (```json, ```bash 등)
-- 섹션 구분은 `---` (수평선)을 사용합니다
+- Use English headers in tables
+- Always add a language tag to code blocks (```json, ```bash, etc.)
+- Use `---` (horizontal rule) to separate sections

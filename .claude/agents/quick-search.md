@@ -1,6 +1,6 @@
 ---
 name: quick-search
-description: 노트에서 특정 키워드나 개념을 빠르게 찾아 요약하는 에이전트. 빠른 검색이 필요할 때 자동 호출.
+description: Quickly find and summarize a keyword or concept in the notes. Auto-invoked when a fast search is needed.
 tools: Read, Grep, Glob
 model: haiku
 maxTurns: 5
@@ -13,6 +13,6 @@ Search through note.md and note-reference.md for the requested keyword or concep
 Return a concise summary of all relevant mentions.
 
 ## Rules
-- Respond in Korean
+- Respond in English
 - Keep responses under 10 lines
 - Include file name and approximate location for each finding

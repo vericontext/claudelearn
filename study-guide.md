@@ -1,244 +1,244 @@
-# Claude Code 학습 가이드
+# Claude Code Study Guide
 
-> `note-reference.md` — 공개용 원본 (수정하지 말 것)
-> `note.md` — 작업용 (개인 메모, 체크 표시 등 자유롭게)
-
----
-
-## 학습 원칙
-
-1. **읽기만으로는 안 된다** — 반드시 직접 설정하고 실행해볼 것
-2. **한 번에 하나씩** — 기능 하나를 완전히 체득한 후 다음으로
-3. **실제 프로젝트에 적용** — 연습용이 아닌 지금 하는 작업에 바로 적용
+> `note-reference.md` — public reference (do not modify)
+> `note.md` — working copy (personal notes, checkboxes, freely editable)
 
 ---
 
-## Phase 1: 기초 세팅 (Day 1~2)
+## Learning Principles
 
-> 목표: Claude Code를 "나에게 맞게" 세팅하는 것
+1. **Reading alone is not enough** — always configure and run things yourself
+2. **One at a time** — fully internalize one feature before moving on
+3. **Apply to real projects** — use it on your current work, not practice exercises
+
+---
+
+## Phase 1: Basic Setup (Day 1~2)
+
+> Goal: Configure Claude Code to fit your workflow
 
 ### 1-1. Memory / CLAUDE.md
 
-**읽기**: note.md 섹션 1
+**Read**: note.md section 1
 
-**실습**:
-- [x] 현재 프로젝트에 `CLAUDE.md` 작성 (5줄 이하로 시작)
-- [x] `~/.claude/CLAUDE.md` 개인 전역 설정 작성
-- [x] `/init` 실행해서 자동 생성 결과 확인
-- [x] `.claude/rules/` 디렉토리에 경로별 규칙 1개 만들어보기
-- [x] `/memory` 실행해서 Auto Memory 상태 확인
+**Practice**:
+- [x] Write `CLAUDE.md` for the current project (start with 5 lines or fewer)
+- [x] Write `~/.claude/CLAUDE.md` for global personal settings
+- [x] Run `/init` and review the auto-generated result
+- [x] Create one path-specific rule in `.claude/rules/`
+- [x] Run `/memory` and check Auto Memory status
 
-**체크포인트**: 새 세션 시작 시 Claude가 내 규칙을 따르는지 확인
+**Checkpoint**: Verify Claude follows your rules when a new session starts
 
 ### 1-2. Permissions
 
-**읽기**: note.md 섹션 2
+**Read**: note.md section 2
 
-**실습**:
-- [x] 현재 권한 모드 확인 (`default`인지)
-- [x] `.claude/settings.json`에 자주 쓰는 명령 allow 규칙 추가
-- [x] deny 규칙 1개 추가 (예: `Bash(rm -rf *)`)
-- [ ] `acceptEdits` 모드로 전환해보고 차이 체감
+**Practice**:
+- [x] Check current permission mode (is it `default`?)
+- [x] Add allow rules for frequently used commands in `.claude/settings.json`
+- [x] Add one deny rule (e.g. `Bash(rm -rf *)`)
+- [ ] Switch to `acceptEdits` mode and feel the difference
 
-**체크포인트**: 허용/거부가 의도대로 동작하는지 확인
+**Checkpoint**: Confirm allow/deny rules behave as intended
 
 ### 1-3. Best Practices
 
-**읽기**: note.md 섹션 3
+**Read**: note.md section 3
 
-**실습**:
-- [x] 다음 작업에서 "탐색 → 계획 → 구현 → 커밋" 4단계 의식적으로 적용
-- [x] `/clear` 습관화 — 작업 전환 시 반드시 실행
-- [x] 나쁜 프롬프트 vs 좋은 프롬프트 비교 테이블 보고, 다음 프롬프트 작성 시 적용
+**Practice**:
+- [x] Apply the "Explore → Plan → Implement → Commit" 4-step flow consciously in your next task
+- [x] Make `/clear` a habit — run it every time you switch tasks
+- [x] Read the bad vs good prompt comparison table and apply it to your next prompt
 
-**체크포인트**: 한 세션에서 컨텍스트 오염 없이 작업 완료
+**Checkpoint**: Complete a task in one session without context pollution
 
 ---
 
-## Phase 2: 핵심 확장 기능 (Day 3~7)
+## Phase 2: Core Extensions (Day 3~7)
 
-> 목표: 가장 자주 쓸 기능 3개를 자유자재로 사용
+> Goal: Master the 3 most frequently used features
 
 ### 2-1. Skills
 
-**읽기**: note.md 섹션 4
+**Read**: note.md section 4
 
-**실습**:
-- [x] 간단한 스킬 1개 만들기: `.claude/skills/hello/SKILL.md`
+**Practice**:
+- [x] Create a simple skill: `.claude/skills/hello/SKILL.md`
   ```yaml
   ---
   name: hello
-  description: 인사하는 스킬
+  description: A greeting skill
   ---
-  사용자에게 한국어로 친근하게 인사하세요.
+  Greet the user warmly in Korean.
   ```
-- [x] `/hello` 실행해서 동작 확인
-- [x] 실전 스킬 만들기 — note.md 실전 예제 참고:
-  - `/ship`: staged/unstaged diff 읽어 자동 커밋 + PR 생성
-  - `/review [pr-number]`: PR diff/댓글 분석 후 리뷰 코멘트
-- [x] `!`command`` 동적 컨텍스트 주입 사용해보기
-- [x] `$ARGUMENTS` 인수 전달 사용해보기
-- [ ] `disable-model-invocation: true` vs 기본 차이 확인
+- [x] Run `/hello` and verify it works
+- [x] Build real-world skills — see note.md practical examples:
+  - `/ship`: read staged/unstaged diff, auto-commit + create PR
+  - `/review [pr-number]`: analyze PR diff/comments and post review
+- [x] Try `!`command`` dynamic context injection
+- [x] Try `$ARGUMENTS` argument passing
+- [ ] Compare `disable-model-invocation: true` vs default behavior
 
-**체크포인트**: `/ship`으로 실제 커밋 + PR 생성까지 한 커맨드에 완료
+**Checkpoint**: Complete an actual commit + PR creation with `/ship` in one command
 
 ### 2-2. Hooks
 
-**읽기**: note.md 섹션 6
+**Read**: note.md section 6
 
-**실습**:
-- [x] 파일 수정 시 테스트 자동 실행 (`PostToolUse` + `Edit|Write` matcher)
-  - Claude가 파일 고칠 때마다 테스트 결과가 컨텍스트에 자동 주입됨
-- [ ] 작업 완료 시 자동 검증 (`Stop` + `type: agent`)
-  - 응답 완료마다 테스트 돌려서 실패 시 Claude에게 피드백
-- [ ] 자동 포맷 훅 설정 (prettier/eslint 연동)
-- [x] Exit code 2로 차단하는 훅 만들어보기 (보호 파일)
-- [x] 압축 후 리마인더 훅 (`SessionStart` + `compact` matcher)
+**Practice**:
+- [x] Auto-run tests on file edits (`PostToolUse` + `Edit|Write` matcher)
+  - Test results are automatically injected into context every time Claude edits a file
+- [ ] Auto-validate on task completion (`Stop` + `type: agent`)
+  - Run tests after every response; feed failures back to Claude
+- [ ] Set up auto-format hook (prettier/eslint integration)
+- [x] Create a hook that blocks edits with exit code 2 (protected files)
+- [x] Add a compact reminder hook (`SessionStart` + `compact` matcher)
 
-**체크포인트**: 파일 수정 → 테스트 자동 실행 → 실패 시 Claude 자동 수정까지 동작
+**Checkpoint**: File edit → test auto-run → Claude auto-fixes on failure
 
 ### 2-3. MCP
 
-**읽기**: note.md 섹션 7
+**Read**: note.md section 7
 
-**실습**:
-- [x] `/mcp` 실행해서 현재 상태 확인
-- [x] HTTP MCP 서버 1개 추가해보기 (GitHub, Notion 등 이미 쓰는 서비스)
+**Practice**:
+- [x] Run `/mcp` and check current status
+- [x] Add one HTTP MCP server (GitHub, Notion, or a service you already use)
   ```bash
   claude mcp add --transport http github https://api.githubcopilot.com/mcp/
   ```
-- [x] `claude mcp list`로 확인
-- [ ] `@github:issue://번호` 형식으로 이슈 직접 참조해서 구현 요청해보기
-- [x] `.mcp.json`으로 프로젝트 공유 설정 해보기
+- [x] Verify with `claude mcp list`
+- [ ] Reference an issue directly using `@github:issue://number` and request implementation
+- [x] Set up project-shared config with `.mcp.json`
 
-**체크포인트**: `@서비스:리소스://ID` 형식으로 외부 데이터를 대화에서 직접 활용
+**Checkpoint**: Use `@service:resource://ID` syntax to access external data in conversation
 
 ---
 
-## Phase 3: 고급 기능 (Day 8~14)
+## Phase 3: Advanced Features (Day 8~14)
 
-> 목표: 복잡한 작업을 효율적으로 처리하는 패턴 체득
+> Goal: Master patterns for handling complex tasks efficiently
 
 ### 3-1. Subagents
 
-**읽기**: note.md 섹션 5
+**Read**: note.md section 5
 
-**실습**:
-- [x] 커스텀 에이전트 1개 만들기: `.claude/agents/reviewer.md`
-- [ ] `tools`, `model`, `maxTurns` 프론트매터 설정 실험
-- [x] 병렬 리뷰 에이전트 3개 만들기 — note.md 실전 예제 참고:
-  - `security-reviewer` (opus) — OWASP Top 10 보안 분석
-  - `perf-reviewer` (sonnet) — N+1 쿼리/메모리 누수 탐지
-  - `test-validator` (haiku) — 테스트 커버리지 검증
-- [ ] 포그라운드 vs 백그라운드 실행 차이 체험
-- [ ] `memory: user` 설정으로 세션 간 학습 확인
+**Practice**:
+- [x] Create one custom agent: `.claude/agents/reviewer.md`
+- [ ] Experiment with `tools`, `model`, `maxTurns` frontmatter settings
+- [x] Build 3 parallel review agents — see note.md practical examples:
+  - `security-reviewer` (opus) — OWASP Top 10 security analysis
+  - `perf-reviewer` (sonnet) — N+1 query / memory leak detection
+  - `test-validator` (haiku) — test coverage verification
+- [ ] Experience the difference between foreground and background execution
+- [ ] Set `memory: user` and verify cross-session learning
 
-**체크포인트**: "보안/성능/테스트 동시에 리뷰해줘" 한 문장으로 3개 에이전트 병렬 실행
+**Checkpoint**: Run all 3 agents in parallel with one sentence: "Review security/performance/tests simultaneously"
 
 ### 3-2. Headless / Agent SDK
 
-**읽기**: note.md 섹션 10
+**Read**: note.md section 10
 
-**실습**:
-- [ ] `claude -p "간단한 작업" --output-format json` 실행
-- [ ] `--allowedTools` 지정해서 자동 승인 실행
-- [ ] Unix 파이프 패턴: `cat error.txt | claude -p "원인 분석"`
-- [ ] `--continue` / `--resume`으로 세션 이어가기
-- [ ] 간단한 셸 스크립트에 Claude 통합
+**Practice**:
+- [ ] Run `claude -p "simple task" --output-format json`
+- [ ] Run with `--allowedTools` for auto-approved execution
+- [ ] Unix pipe pattern: `cat error.txt | claude -p "analyze the cause"`
+- [ ] Resume a session with `--continue` / `--resume`
+- [ ] Integrate Claude into a simple shell script
 
-**체크포인트**: 비대화형으로 자동화 파이프라인 1개 구축
+**Checkpoint**: Build one automated pipeline running non-interactively
 
-### 3-3. Plugins (선택)
+### 3-3. Plugins (Optional)
 
-**읽기**: note.md 섹션 8
+**Read**: note.md section 8
 
-**실습**:
-- [ ] 지금까지 만든 skills/agents/hooks를 플러그인으로 패키징
-- [ ] `claude --plugin-dir ./my-plugin` 테스트
-- [ ] `plugin.json` 매니페스트 작성
+**Practice**:
+- [ ] Package the skills/agents/hooks you've built into a plugin
+- [ ] Test with `claude --plugin-dir ./my-plugin`
+- [ ] Write the `plugin.json` manifest
 
-**체크포인트**: 다른 프로젝트에서 플러그인 로드해서 동작 확인
+**Checkpoint**: Load the plugin in a different project and verify it works
 
 ---
 
-## Phase 4: 팀/자동화 (Day 15+)
+## Phase 4: Team / Automation (Day 15+)
 
-> 목표: 팀 워크플로우에 Claude Code 통합
+> Goal: Integrate Claude Code into team workflows
 
 ### 4-1. CI/CD
 
-**읽기**: note.md 섹션 13
+**Read**: note.md section 13
 
-**실습**:
-- [ ] GitHub Actions: `/install-github-app` 실행
-- [x] 기본 워크플로우 `.github/workflows/claude.yml` 배포
-- [ ] PR에서 `@claude` 멘션 테스트
-- [x] 커스텀 프롬프트로 자동 리뷰 설정
+**Practice**:
+- [ ] GitHub Actions: run `/install-github-app`
+- [x] Deploy the base workflow `.github/workflows/claude.yml`
+- [ ] Test `@claude` mention in a PR
+- [x] Set up automated review with a custom prompt
 
-### 4-2. Slack 통합
+### 4-2. Slack Integration
 
-**읽기**: note.md 섹션 14
+**Read**: note.md section 14
 
-**실습**:
-- [ ] Claude App 설치 + 계정 연결
-- [ ] 라우팅 모드 선택 (Code only vs Code + Chat)
-- [ ] 채널에서 `@Claude` 코딩 작업 요청 테스트
+**Practice**:
+- [ ] Install Claude App + connect account
+- [ ] Choose routing mode (Code only vs Code + Chat)
+- [ ] Test a coding task request with `@Claude` in a channel
 
-### 4-3. Agent Teams (실험)
+### 4-3. Agent Teams (Experimental)
 
-**읽기**: note.md 섹션 9
+**Read**: note.md section 9
 
-**실습**:
-- [ ] `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` 활성화
-- [ ] 간단한 병렬 작업 시도 (예: 보안 리뷰 + 성능 리뷰)
+**Practice**:
+- [ ] Enable `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+- [ ] Try a simple parallel task (e.g. security review + performance review)
 
 ---
 
-## 학습 팁
+## Study Tips
 
-### 우선순위 매트릭스
+### Priority Matrix
 
 ```
-          높은 빈도
+          High frequency
             |
   Phase 1   |   Phase 2
-  (기초)     |   (핵심)
+  (basics)  |   (core)
             |
 ───────────┼───────────
             |
   Phase 4   |   Phase 3
-  (팀/자동화)|   (고급)
+  (team/CI) |   (advanced)
             |
-          낮은 빈도
+          Low frequency
 ```
 
-- **Phase 1+2가 전체 활용의 80%** — 여기에 집중
-- Phase 3은 복잡한 작업이 생길 때 필요한 만큼
-- Phase 4는 팀 도입 시점에
+- **Phase 1+2 covers 80% of daily usage** — focus here
+- Phase 3 as needed for complex tasks
+- Phase 4 when onboarding a team
 
-### 반복 학습 주기
+### Repeating Learning Cycle
 
 ```
-1주차: Phase 1 + 2-1 (Skills)
-2주차: Phase 2-2, 2-3 (Hooks, MCP) + Phase 1 복습
-3주차: Phase 3 필요한 것만 + Phase 2 복습
-4주차~: Phase 4 + 전체 워크플로우 최적화
+Week 1: Phase 1 + 2-1 (Skills)
+Week 2: Phase 2-2, 2-3 (Hooks, MCP) + Phase 1 review
+Week 3: Phase 3 as needed + Phase 2 review
+Week 4+: Phase 4 + overall workflow optimization
 ```
 
-### 학습 기록 방법
+### How to Keep Notes
 
-각 Phase 완료 후 `note.md`에 개인 메모 추가:
-- 실제로 써보니 유용했던 것
-- 예상과 달랐던 것
-- 내 프로젝트에 맞게 커스터마이즈한 설정
+After completing each Phase, add personal notes to `note.md`:
+- What turned out to be useful
+- What was different from expectations
+- Settings you customized for your project
 
 ---
 
-## 파일 구조
+## File Structure
 
 ```
-ideanote/
-├── note-reference.md   # 공개용 원본 (건드리지 않음)
-├── note.md             # 작업용 (메모, 체크, 수정 자유)
-└── study-guide.md      # 이 파일 (학습 가이드)
+claudelearn/
+├── note-reference.md   # public reference (do not touch)
+├── note.md             # working copy (notes, checks, edits welcome)
+└── study-guide.md      # this file (study guide)
 ```

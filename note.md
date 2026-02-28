@@ -1,89 +1,89 @@
-# Claude Code 기능 딥다이브 노트
+# Claude Code Feature Deep Dive Notes
 
-> 공식 문서: https://code.claude.com/docs/en/overview
-> 목차 전체: https://code.claude.com/docs/llms.txt
-
----
-
-## 학습 현황
-
-| 기능 | 상태 | Part | 문서 링크 |
-|------|------|------|-----------|
-| Memory / CLAUDE.md | ✅ 완료 | 1 | [memory](https://code.claude.com/docs/en/memory) |
-| Permissions | ✅ 완료 | 1 | [permissions](https://code.claude.com/docs/en/permissions) |
-| Best Practices | ✅ 완료 | 1 | [best-practices](https://code.claude.com/docs/en/best-practices) |
-| Skills (슬래시 커맨드) | ✅ 완료 | 2 | [skills](https://code.claude.com/docs/en/skills) |
-| Subagents | ✅ 완료 | 2 | [sub-agents](https://code.claude.com/docs/en/sub-agents) |
-| Hooks | ✅ 완료 | 2 | [hooks](https://code.claude.com/docs/en/hooks) |
-| MCP | ✅ 완료 | 2 | [mcp](https://code.claude.com/docs/en/mcp) |
-| Plugins | ✅ 완료 | 2 | [plugins](https://code.claude.com/docs/en/plugins) |
-| Agent Teams | ✅ 완료 | 3 | [agent-teams](https://code.claude.com/docs/en/agent-teams) |
-| Headless / Agent SDK | ✅ 완료 | 3 | [headless](https://code.claude.com/docs/en/headless) |
-| Common Workflows | ✅ 완료 | 3 | [common-workflows](https://code.claude.com/docs/en/common-workflows) |
-| 플랫폼 & 통합 | ✅ 완료 | 4 | [overview](https://code.claude.com/docs/en/overview) |
-| CI/CD | ✅ 완료 | 4 | [github-actions](https://code.claude.com/docs/en/github-actions) |
-| Slack 통합 | ✅ 완료 | 4 | [slack](https://code.claude.com/docs/en/slack) |
+> Official docs: https://code.claude.com/docs/en/overview
+> Full table of contents: https://code.claude.com/docs/llms.txt
 
 ---
 
-# Part 1: 기본 세팅 (먼저 알아야 할 것들)
+## Learning Status
+
+| Feature | Status | Part | Doc Link |
+|---------|--------|------|----------|
+| Memory / CLAUDE.md | ✅ Done | 1 | [memory](https://code.claude.com/docs/en/memory) |
+| Permissions | ✅ Done | 1 | [permissions](https://code.claude.com/docs/en/permissions) |
+| Best Practices | ✅ Done | 1 | [best-practices](https://code.claude.com/docs/en/best-practices) |
+| Skills (Slash Commands) | ✅ Done | 2 | [skills](https://code.claude.com/docs/en/skills) |
+| Subagents | ✅ Done | 2 | [sub-agents](https://code.claude.com/docs/en/sub-agents) |
+| Hooks | ✅ Done | 2 | [hooks](https://code.claude.com/docs/en/hooks) |
+| MCP | ✅ Done | 2 | [mcp](https://code.claude.com/docs/en/mcp) |
+| Plugins | ✅ Done | 2 | [plugins](https://code.claude.com/docs/en/plugins) |
+| Agent Teams | ✅ Done | 3 | [agent-teams](https://code.claude.com/docs/en/agent-teams) |
+| Headless / Agent SDK | ✅ Done | 3 | [headless](https://code.claude.com/docs/en/headless) |
+| Common Workflows | ✅ Done | 3 | [common-workflows](https://code.claude.com/docs/en/common-workflows) |
+| Platform & Integration | ✅ Done | 4 | [overview](https://code.claude.com/docs/en/overview) |
+| CI/CD | ✅ Done | 4 | [github-actions](https://code.claude.com/docs/en/github-actions) |
+| Slack Integration | ✅ Done | 4 | [slack](https://code.claude.com/docs/en/slack) |
+
+---
+
+# Part 1: Basic Setup (What to Know First)
 
 ---
 
 ## 1. Memory / CLAUDE.md
 
-> 문서: https://code.claude.com/docs/en/memory
+> Docs: https://code.claude.com/docs/en/memory
 
-### 핵심 개념
+### Key concepts
 
-Claude Code에는 두 종류의 영속 메모리가 있다:
-- **CLAUDE.md 파일**: 직접 작성/관리하는 지시사항, 규칙, 선호 설정
-- **Auto Memory**: Claude가 프로젝트 패턴, 주요 명령어, 선호를 자동 저장
+Claude Code has two kinds of persistent memory:
+- **CLAUDE.md file**: Instructions, rules, and preferences you write and manage yourself
+- **Auto Memory**: Claude automatically stores project patterns, key commands, and preferences
 
-### 메모리 위계 구조 (6단계)
+### Memory hierarchy (6 levels)
 
-| 메모리 타입 | 위치 | 용도 | 공유 범위 |
-|------------|------|------|-----------|
-| **Managed policy** | macOS: `/Library/Application Support/ClaudeCode/CLAUDE.md`<br>Linux: `/etc/claude-code/CLAUDE.md` | 조직 전체 코딩 표준, 보안 정책 | 조직 전체 |
-| **Project** | `./CLAUDE.md` 또는 `./.claude/CLAUDE.md` | 프로젝트 아키텍처, 코딩 규칙 | 팀원 (소스 관리) |
-| **Project rules** | `./.claude/rules/*.md` | 모듈별/경로별 세부 규칙 | 팀원 (소스 관리) |
-| **User** | `~/.claude/CLAUDE.md` | 개인 코드 스타일 선호 | 본인만 (전체 프로젝트) |
-| **Project local** | `./CLAUDE.local.md` | 개인 프로젝트별 설정 (샌드박스 URL 등) | 본인만 (현재 프로젝트) |
-| **Auto memory** | `~/.claude/projects/<project>/memory/` | Claude 자동 메모, 학습 내용 | 본인만 (프로젝트별) |
+| Memory type | Location | Purpose | Scope |
+|------------|----------|---------|-------|
+| **Managed policy** | macOS: `/Library/Application Support/ClaudeCode/CLAUDE.md`<br>Linux: `/etc/claude-code/CLAUDE.md` | Org-wide coding standards, security policy | Organization |
+| **Project** | `./CLAUDE.md` or `./.claude/CLAUDE.md` | Project architecture, coding rules | Team (version controlled) |
+| **Project rules** | `./.claude/rules/*.md` | Per-module/path rules | Team (version controlled) |
+| **User** | `~/.claude/CLAUDE.md` | Personal code style preferences | Self only (all projects) |
+| **Project local** | `./CLAUDE.local.md` | Per-project local settings (e.g. sandbox URL) | Self only (current project) |
+| **Auto memory** | `~/.claude/projects/<project>/memory/` | Claude auto-memory, learned content | Self only (per project) |
 
-### Auto Memory 구조
+### Auto Memory structure
 
 ```
 ~/.claude/projects/<project>/memory/
-  MEMORY.md          # 간결한 인덱스 — 매 세션 시작 시 로드 (첫 200줄)
-  debugging.md       # 상세 디버깅 패턴 (필요 시 읽기)
-  api-conventions.md # API 설계 결정 (필요 시 읽기)
+  MEMORY.md          # Concise index — loaded at session start (first 200 lines)
+  debugging.md       # Detailed debugging patterns (read when needed)
+  api-conventions.md # API design decisions (read when needed)
 ```
 
-- `MEMORY.md` 첫 200줄이 시스템 프롬프트에 주입됨
-- 토픽 파일은 시작 시 로드되지 않고 Claude가 필요 시 읽음
-- `/memory` 명령어로 토글
-- 비활성화:
+- First 200 lines of `MEMORY.md` are injected into the system prompt
+- Topic files are not loaded at start; Claude reads them when needed
+- Toggle via `/memory` command
+- Disable:
 ```json
 // ~/.claude/settings.json
 { "autoMemoryEnabled": false }
 ```
 ```bash
-export CLAUDE_CODE_DISABLE_AUTO_MEMORY=1  # 강제 비활성화
+export CLAUDE_CODE_DISABLE_AUTO_MEMORY=1  # Force disable
 ```
 
-### CLAUDE.md Import (`@` 문법)
+### CLAUDE.md Import (`@` syntax)
 
 ```markdown
 See @README for project overview and @package.json for available npm commands.
-# 추가 지침
+# Additional instructions
 - git workflow @docs/git-instructions.md
 ```
-- 상대/절대 경로 모두 가능
-- 최대 5단계 재귀 import
-- 코드 블록/인라인 코드 내에서는 평가 안 됨
+- Relative and absolute paths both supported
+- Up to 5 levels of recursive import
+- Not evaluated inside code blocks or inline code
 
-### 모듈형 Rules (`.claude/rules/`)
+### Modular Rules (`.claude/rules/`)
 
 ```
 your-project/
@@ -95,36 +95,36 @@ your-project/
       security.md
 ```
 
-경로 조건부 규칙 (YAML frontmatter):
+Path-conditional rules (YAML frontmatter):
 ```markdown
 ---
 paths:
   - "src/api/**/*.ts"
 ---
-# API 개발 규칙
-- 모든 API 엔드포인트에 입력 검증 필수
+# API development rules
+- Require input validation on all API endpoints
 ```
 
-지원 패턴:
-| 패턴 | 매칭 |
-|------|------|
-| `**/*.ts` | 모든 하위 디렉토리의 TypeScript 파일 |
-| `src/**/*` | src/ 아래 모든 파일 |
-| `*.md` | 프로젝트 루트의 마크다운 파일 |
-| `src/components/*.tsx` | 특정 디렉토리의 React 컴포넌트 |
+Supported patterns:
+| Pattern | Matches |
+|---------|---------|
+| `**/*.ts` | TypeScript files in any subdirectory |
+| `src/**/*` | All files under src/ |
+| `*.md` | Markdown files at project root |
+| `src/components/*.tsx` | React components in that directory |
 
-중괄호 확장: `src/**/*.{ts,tsx}`
+Brace expansion: `src/**/*.{ts,tsx}`
 
-사용자 수준 rules: `~/.claude/rules/` — 모든 프로젝트에 적용 (프로젝트 rules보다 먼저 로드)
+User-level rules: `~/.claude/rules/` — applied to all projects (loaded before project rules)
 
-### 주요 명령어
+### Key commands
 
-| 명령어 | 기능 |
-|--------|------|
-| `/init` | 코드베이스 분석 → 빌드 시스템, 테스트 프레임워크, 코드 패턴 감지 |
-| `/memory` | Auto Memory 토글 |
+| Command | Purpose |
+|---------|---------|
+| `/init` | Analyze codebase → detect build system, test framework, code patterns |
+| `/memory` | Toggle Auto Memory |
 
-### 추가 디렉토리에서 CLAUDE.md 로드
+### Load CLAUDE.md from additional directories
 
 ```bash
 CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ../shared-config
@@ -134,41 +134,41 @@ CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ../shared-config
 
 ## 2. Permissions
 
-> 문서: https://code.claude.com/docs/en/permissions
+> Docs: https://code.claude.com/docs/en/permissions
 
-### 도구 타입별 기본 승인
+### Default approval by tool type
 
-| 도구 타입 | 예시 | 승인 필요 | "다시 묻지 않기" 동작 |
-|-----------|------|-----------|----------------------|
-| 읽기 전용 | File reads, Grep | 아니오 | N/A |
-| Bash 명령 | 셸 실행 | 예 | 프로젝트 디렉토리+명령어별 영구 저장 |
-| 파일 수정 | Edit/Write | 예 | 세션 종료까지 |
+| Tool type | Examples | Approval required | "Don't ask again" behavior |
+|-----------|----------|-------------------|----------------------------|
+| Read-only | File reads, Grep | No | N/A |
+| Bash commands | Shell execution | Yes | Persisted per project dir + command |
+| File edits | Edit/Write | Yes | Until session end |
 
-### 5가지 권한 모드
+### Five permission modes
 
-| 모드 | 설명 |
-|------|------|
-| `default` | 표준: 첫 사용 시 승인 요청 |
-| `acceptEdits` | 파일 편집 자동 승인 (세션 동안) |
-| `plan` | Plan Mode: 분석만 가능, 수정 불가 |
-| `dontAsk` | `/permissions`에서 사전 승인된 것만 허용, 나머지 자동 거부 |
-| `bypassPermissions` | 모든 승인 건너뜀 (안전한 환경 필수) |
+| Mode | Description |
+|------|-------------|
+| `default` | Standard: ask on first use |
+| `acceptEdits` | Auto-approve file edits (for the session) |
+| `plan` | Plan Mode: analysis only, no edits |
+| `dontAsk` | Only pre-approved items in `/permissions` allowed; rest auto-denied |
+| `bypassPermissions` | Skip all approvals (safe environment required) |
 
-### 권한 규칙 문법
+### Permission rule syntax
 
-**도구 전체 매칭**:
+**Match entire tool**:
 ```json
 { "allow": ["Bash", "WebFetch", "Read"] }
 ```
 
-**세밀한 지정**:
-| 규칙 | 효과 |
-|------|------|
-| `Bash(npm run build)` | 정확한 명령 매칭 |
-| `Read(./.env)` | .env 파일 읽기 매칭 |
-| `WebFetch(domain:example.com)` | 특정 도메인 요청 매칭 |
+**Fine-grained**:
+| Rule | Effect |
+|------|--------|
+| `Bash(npm run build)` | Exact command match |
+| `Read(./.env)` | Match reading .env file |
+| `WebFetch(domain:example.com)` | Match requests to that domain |
 
-**와일드카드 패턴**:
+**Wildcard patterns**:
 ```json
 {
   "permissions": {
@@ -185,16 +185,16 @@ CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ../shared-config
 }
 ```
 
-### 경로 패턴 문법
+### Path pattern syntax
 
-| 패턴 | 의미 | 예시 | 매칭 |
-|------|------|------|------|
-| `//path` | 파일시스템 절대 경로 | `Read(//Users/alice/secrets/**)` | `/Users/alice/secrets/**` |
-| `~/path` | 홈 디렉토리 기준 | `Read(~/Documents/*.pdf)` | `/Users/alice/Documents/*.pdf` |
-| `/path` | 프로젝트 루트 기준 | `Edit(/src/**/*.ts)` | `<project root>/src/**/*.ts` |
-| `path` 또는 `./path` | 현재 디렉토리 기준 | `Read(*.env)` | `<cwd>/*.env` |
+| Pattern | Meaning | Example | Matches |
+|---------|---------|---------|---------|
+| `//path` | Filesystem absolute path | `Read(//Users/alice/secrets/**)` | `/Users/alice/secrets/**` |
+| `~/path` | Home directory relative | `Read(~/Documents/*.pdf)` | `/Users/alice/Documents/*.pdf` |
+| `/path` | Project root relative | `Edit(/src/**/*.ts)` | `<project root>/src/**/*.ts` |
+| `path` or `./path` | Current directory relative | `Read(*.env)` | `<cwd>/*.env` |
 
-### MCP / Task 권한
+### MCP / Task permissions
 
 ```json
 {
@@ -204,23 +204,23 @@ CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ../shared-config
   }
 }
 ```
-- `mcp__puppeteer`: puppeteer 서버의 모든 도구 매칭
-- `mcp__puppeteer__puppeteer_navigate`: 특정 도구만 매칭
-- `Task(Explore)`: 특정 서브에이전트 차단
+- `mcp__puppeteer`: match all tools of the puppeteer server
+- `mcp__puppeteer__puppeteer_navigate`: match that specific tool only
+- `Task(Explore)`: block that specific subagent
 
-### 관리자 설정 (Managed Settings)
+### Managed settings
 
-| 설정 | 설명 |
-|------|------|
-| `disableBypassPermissionsMode` | `"disable"`로 bypassPermissions 모드 차단 |
-| `allowManagedPermissionRulesOnly` | 사용자/프로젝트 권한 규칙 정의 차단 |
-| `allowManagedHooksOnly` | 사용자/프로젝트/플러그인 훅 로딩 차단 |
-| `allowManagedMcpServersOnly` | 관리 설정의 MCP 서버만 허용 |
-| `allow_remote_sessions` | Remote Control 및 웹 세션 접근 제어 |
+| Setting | Description |
+|---------|-------------|
+| `disableBypassPermissionsMode` | Block bypassPermissions mode with `"disable"` |
+| `allowManagedPermissionRulesOnly` | Block user/project permission rule definitions |
+| `allowManagedHooksOnly` | Block user/project/plugin hook loading |
+| `allowManagedMcpServersOnly` | Only allow MCP servers from managed config |
+| `allow_remote_sessions` | Control Remote Control and web session access |
 
-### 실전 설정 예제
+### Example configurations
 
-**개발자 친화 (빠른 반복)**:
+**Developer-friendly (fast iteration)**:
 ```json
 {
   "permissions": {
@@ -240,7 +240,7 @@ CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ../shared-config
 }
 ```
 
-**보안 강화 (프로덕션)**:
+**Security-hardened (production)**:
 ```json
 {
   "permissions": {
@@ -263,42 +263,42 @@ CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ../shared-config
 
 ## 3. Best Practices
 
-> 문서: https://code.claude.com/docs/en/best-practices
+> Docs: https://code.claude.com/docs/en/best-practices
 
-### 핵심 원리
+### Core principle
 
-> 컨텍스트 창은 빠르게 채워지고, 채워질수록 성능이 저하된다. 가장 중요한 리소스.
+> Context window fills quickly; the fuller it is, the worse performance. It's the most important resource.
 
-### 효과적 사용 5원칙
+### Five principles for effective use
 
-#### 원칙 1: 검증 기준 제공
+#### Principle 1: Provide verification criteria
 
-| 전략 | Before | After |
-|------|--------|-------|
-| 검증 기준 제공 | "이메일 검증 함수 구현해줘" | "validateEmail 함수 작성. user@example.com→true, invalid→false. 구현 후 테스트 실행" |
-| UI 변경 시각 검증 | "대시보드 더 보기 좋게" | "[스크린샷 첨부] 이 디자인 구현. 스크린샷 찍어서 비교" |
-| 근본 원인 해결 | "빌드 실패함" | "빌드가 이 에러로 실패: [에러 붙여넣기]. 고치고 빌드 성공 확인" |
+| Strategy | Before | After |
+|----------|--------|-------|
+| Verification criteria | "Implement an email validation function" | "Write validateEmail. user@example.com→true, invalid→false. Run tests after implementing" |
+| Visual verification for UI | "Make the dashboard look better" | "[Attach screenshot] Implement this design. Take a screenshot to compare" |
+| Root cause fix | "Build is failing" | "Build fails with this error: [paste error]. Fix and confirm build succeeds" |
 
-#### 원칙 2: 탐색 → 계획 → 구현 → 커밋 (4단계)
+#### Principle 2: Explore → Plan → Implement → Commit (4 steps)
 
-1. **탐색** (Plan Mode) — 파일 읽기, 질문 답변, 변경 없음
-2. **계획** (Plan Mode) — 상세 구현 계획 수립
-3. **구현** (Normal Mode) — 코드 작성, 계획 대비 검증
-4. **커밋** (Normal Mode) — 서술적 메시지로 커밋, PR 생성
+1. **Explore** (Plan Mode) — Read files, answer questions, no changes
+2. **Plan** (Plan Mode) — Write a detailed implementation plan
+3. **Implement** (Normal Mode) — Write code, verify against plan
+4. **Commit** (Normal Mode) — Commit with descriptive message, create PR
 
-#### 원칙 3: 효과적인 CLAUDE.md 작성
+#### Principle 3: Effective CLAUDE.md
 
-| 포함할 것 | 제외할 것 |
-|-----------|-----------|
-| Claude가 추측 못 할 Bash 명령 | 코드 읽으면 알 수 있는 것 |
-| 기본값과 다른 코드 스타일 규칙 | Claude가 이미 아는 표준 규약 |
-| 테스트 지침 | 상세 API 문서 (링크로 대체) |
-| 저장소 에티켓 (브랜치 명명, PR 규약) | 자주 바뀌는 정보 |
-| 프로젝트 고유 아키텍처 결정 | 긴 설명이나 튜토리얼 |
-| 개발 환경 quirks | 파일별 코드베이스 설명 |
-| 흔한 함정 | "깔끔한 코드 작성" 같은 자명한 것 |
+| Include | Exclude |
+|---------|---------|
+| Bash commands Claude can't infer | Things obvious from reading code |
+| Code style rules that differ from defaults | Standard conventions Claude already knows |
+| Test instructions | Full API docs (link instead) |
+| Repo etiquette (branch naming, PR conventions) | Frequently changing info |
+| Project-specific architecture decisions | Long explanations or tutorials |
+| Dev environment quirks | Per-file codebase descriptions |
+| Common pitfalls | Obvious things like "write clean code" |
 
-예시:
+Example:
 ```markdown
 # Code style
 - Use ES modules (import/export) syntax, not CommonJS (require)
@@ -309,51 +309,51 @@ CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ../shared-config
 - Prefer running single tests, not the whole test suite, for performance
 ```
 
-#### 원칙 4: 컨텍스트 적극 관리
+#### Principle 4: Actively manage context
 
-| 명령어 | 용도 |
-|--------|------|
-| `/clear` | 관련 없는 작업 사이에 컨텍스트 비우기 |
-| `/compact <지시>` | 제어된 압축 (지시사항 포함 가능) |
-| `Esc + Esc` 또는 `/rewind` | 체크포인트에서 되감기 |
-| CLAUDE.md 커스텀 | 압축 동작 커스터마이즈 |
+| Command | Purpose |
+|---------|---------|
+| `/clear` | Clear context between unrelated tasks |
+| `/compact <instructions>` | Controlled compaction (can include instructions) |
+| `Esc + Esc` or `/rewind` | Rewind from checkpoint |
+| CLAUDE.md custom | Customize compaction behavior |
 
-#### 원칙 5: Claude에게 인터뷰 시키기
+#### Principle 5: Have Claude interview you
 
 ```text
-I want to build [간단한 설명]. Interview me in detail using the AskUserQuestion tool.
+I want to build [brief description]. Interview me in detail using the AskUserQuestion tool.
 Ask about technical implementation, UI/UX, edge cases, concerns, and tradeoffs.
 Keep interviewing until we've covered everything, then write a complete spec to SPEC.md.
 ```
 
-### 좋은 프롬프트 vs 나쁜 프롬프트
+### Good vs bad prompts
 
-| 나쁜 프롬프트 | 좋은 프롬프트 |
-|--------------|--------------|
-| "이메일 검증 함수 구현" | "validateEmail 작성. test cases 포함, 구현 후 테스트 실행" |
-| "대시보드 개선" | "[스크린샷] 이 디자인 구현, 스크린샷으로 비교" |
-| "빌드 실패함" | "이 에러로 실패: [에러]. 고치고 빌드 성공 확인" |
-| "코드 리팩토링해줘" | "utils.js를 ES2024로 리팩토링, 동일 동작 유지, 테스트 실행" |
+| Bad prompt | Good prompt |
+|------------|-------------|
+| "Implement email validation" | "Write validateEmail with test cases; run tests after implementing" |
+| "Improve the dashboard" | "[Screenshot] Implement this design; compare with screenshot" |
+| "Build is failing" | "Failing with this error: [error]. Fix and confirm build succeeds" |
+| "Refactor this code" | "Refactor utils.js to ES2024; keep same behavior; run tests" |
 
-### 흔한 실패 패턴
+### Common failure patterns
 
-| 패턴 | 해결법 |
-|------|--------|
-| Kitchen sink 세션 (한 세션에 다 우겨넣기) | 관련 없는 작업 사이에 `/clear` |
-| 계속 수정 지시 (2회 이상) | `/clear` 하고 더 나은 프롬프트로 재시작 |
-| 과도한 CLAUDE.md | 무자비하게 가지치기 |
-| 검증 없는 신뢰 | 항상 검증 기준 제공 |
-| 무한 탐색 | 범위 제한하거나 서브에이전트 사용 |
+| Pattern | Fix |
+|---------|-----|
+| Kitchen sink session (everything in one session) | Use `/clear` between unrelated tasks |
+| Repeated fix requests (2+ times) | `/clear` and restart with a better prompt |
+| Bloated CLAUDE.md | Prune ruthlessly |
+| Trust without verification | Always provide verification criteria |
+| Endless exploration | Limit scope or use subagents |
 
-### 병렬 세션 활용 (Writer/Reviewer 패턴)
+### Parallel sessions (Writer/Reviewer pattern)
 
 | Session A (Writer) | Session B (Reviewer) |
 |---|---|
 | `Implement a rate limiter for our API endpoints` | |
 | | `Review the rate limiter implementation in @src/middleware/rateLimiter.ts` |
-| `Here's the review feedback: [B 결과]. Address these issues.` | |
+| `Here's the review feedback: [B result]. Address these issues.` | |
 
-### Fan Out (대량 작업)
+### Fan Out (bulk work)
 
 ```bash
 for file in $(cat files.txt); do
@@ -364,182 +364,182 @@ done
 
 ---
 
-# Part 2: 확장 기능 (하나씩 익히기)
+# Part 2: Extended features (learn one by one)
 
 ---
 
-## 4. Skills (슬래시 커맨드)
+## 4. Skills (slash commands)
 
-> 문서: https://code.claude.com/docs/en/skills
+> Docs: https://code.claude.com/docs/en/skills
 
-### 핵심 개념
-- `SKILL.md` 파일로 정의하는 커스텀 커맨드
-- 기존 `.claude/commands/` 방식을 대체 (하위 호환은 유지)
-- [Agent Skills](https://agentskills.io) 오픈 표준 기반
+### Key concepts
+- Custom commands defined in `SKILL.md` files
+- Replaces legacy `.claude/commands/` (backward compatible)
+- Based on [Agent Skills](https://agentskills.io) open standard
 
-### 저장 위치 (우선순위 순)
-| 위치 | 경로 | 적용 범위 |
-|------|------|-----------|
-| Enterprise | managed settings | 조직 전체 |
-| Personal | `~/.claude/skills/<name>/SKILL.md` | 내 모든 프로젝트 |
-| Project | `.claude/skills/<name>/SKILL.md` | 해당 프로젝트만 |
-| Plugin | `<plugin>/skills/<name>/SKILL.md` | 플러그인 활성화된 곳 |
+### Storage locations (priority order)
+| Location | Path | Scope |
+|----------|------|-------|
+| Enterprise | managed settings | Organization |
+| Personal | `~/.claude/skills/<name>/SKILL.md` | All my projects |
+| Project | `.claude/skills/<name>/SKILL.md` | This project only |
+| Plugin | `<plugin>/skills/<name>/SKILL.md` | Where plugin is enabled |
 
-### SKILL.md 구조
+### SKILL.md structure
 ```yaml
 ---
 name: skill-name
-description: 언제 이 스킬을 쓸지 설명 (Claude가 자동 호출 판단에 사용)
-disable-model-invocation: true  # Claude 자동 호출 방지 (수동만 가능)
-user-invocable: false           # /메뉴에서 숨김 (Claude만 호출 가능)
-allowed-tools: Read, Grep, Glob # 이 스킬 실행 시 허용 도구
-context: fork                   # 서브에이전트에서 격리 실행
-agent: Explore                  # fork 시 사용할 에이전트 타입
-model: sonnet                   # 이 스킬 실행 시 사용할 모델
+description: When to use this skill (used by Claude for auto-invocation)
+disable-model-invocation: true  # Prevent Claude from auto-invoking (manual only)
+user-invocable: false           # Hidden from / menu (Claude-only)
+allowed-tools: Read, Grep, Glob # Tools allowed when this skill runs
+context: fork                   # Run in isolated subagent
+agent: Explore                  # Agent type when context is fork
+model: sonnet                   # Model used when this skill runs
 ---
 
-스킬 지시사항 (마크다운)...
+Skill instructions (markdown)...
 ```
 
-### 프론트매터 필드 전체
+### Frontmatter fields
 
-| 필드 | 필수 | 설명 |
-|------|------|------|
-| `name` | 아니오 | 슬래시 커맨드명. 소문자/숫자/하이픈 (최대 64자). 디렉토리명이 기본값 |
-| `description` | 권장 | Claude가 자동 호출 여부 판단에 사용 → **잘 써야 함** |
-| `argument-hint` | 아니오 | 자동완성 시 힌트. 예: `[issue-number]` |
-| `disable-model-invocation` | 아니오 | `true`면 Claude 자동 실행 불가. 기본: `false` |
-| `user-invocable` | 아니오 | `false`면 `/` 메뉴에서 숨김. 기본: `true` |
-| `allowed-tools` | 아니오 | 스킬 활성 시 승인 없이 쓸 수 있는 도구 |
-| `model` | 아니오 | 스킬 실행 시 사용할 모델 |
-| `context` | 아니오 | `fork`로 설정하면 서브에이전트에서 실행 |
-| `agent` | 아니오 | `context: fork` 시 사용할 에이전트 타입 |
-| `hooks` | 아니오 | 이 스킬 라이프사이클에 한정된 훅 |
+| Field | Required | Description |
+|-------|----------|-------------|
+| `name` | No | Slash command name. Lowercase/digits/hyphen (max 64 chars). Default: directory name |
+| `description` | Recommended | Used by Claude to decide auto-invocation → **write it well** |
+| `argument-hint` | No | Autocomplete hint. e.g. `[issue-number]` |
+| `disable-model-invocation` | No | `true` = Claude cannot auto-run. Default: `false` |
+| `user-invocable` | No | `false` = hidden from `/` menu. Default: `true` |
+| `allowed-tools` | No | Tools allowed without approval when skill is active |
+| `model` | No | Model used when this skill runs |
+| `context` | No | Set to `fork` to run in subagent |
+| `agent` | No | Agent type when `context: fork` |
+| `hooks` | No | Hooks scoped to this skill's lifecycle |
 
-### 인수 전달
+### Argument passing
 ```yaml
-# $ARGUMENTS - 전체 인수
-# $ARGUMENTS[N] 또는 $N - 특정 인수 (0-based)
-# ${CLAUDE_SESSION_ID} - 현재 세션 ID
+# $ARGUMENTS - full argument string
+# $ARGUMENTS[N] or $N - Nth argument (0-based)
+# ${CLAUDE_SESSION_ID} - current session ID
 
 Fix GitHub issue $ARGUMENTS following our coding standards.
 Migrate the $0 component from $1 to $2.
 ```
 
-### 동적 컨텍스트 주입 (`!`command``)
+### Dynamic context injection (`` !`command` ``)
 ```yaml
-## PR 정보
+## PR info
 - diff: !`gh pr diff`
-- 댓글: !`gh pr view --comments`
-- 변경 파일: !`gh pr diff --name-only`
+- comments: !`gh pr view --comments`
+- changed files: !`gh pr diff --name-only`
 ```
-스킬 실행 전에 셸 명령을 실행하고 결과를 프롬프트에 삽입.
+Run shell command before skill execution and inject result into prompt.
 
-### 지원 파일 구조
+### Supported file structure
 ```
 my-skill/
-├── SKILL.md        # 필수
-├── template.md     # 선택
+├── SKILL.md        # Required
+├── template.md     # Optional
 ├── examples/
 └── scripts/
     └── validate.sh
 ```
 
-### 호출 제어 매트릭스
-| 설정 | 사용자 호출 | Claude 호출 | 컨텍스트 로드 |
-|------|------------|------------|--------------|
-| 기본 | O | O | 설명만 항상 로드 |
-| `disable-model-invocation: true` | O | X | 로드 안 됨 |
-| `user-invocable: false` | X | O | 설명만 항상 로드 |
+### Invocation control matrix
+| Setting | User invocation | Claude invocation | Context load |
+|---------|-----------------|-------------------|-------------|
+| Default | Yes | Yes | Description always loaded |
+| `disable-model-invocation: true` | Yes | No | Not loaded |
+| `user-invocable: false` | No | Yes | Description always loaded |
 
-### 서브에이전트에서 실행
+### Running in subagent
 
-| 방식 | 시스템 프롬프트 | 태스크 | 추가 로드 |
-|------|---------------|--------|-----------|
-| Skill + `context: fork` | 에이전트 타입에서 | SKILL.md 내용 | CLAUDE.md |
-| Subagent + `skills` 필드 | 서브에이전트 본문 | Claude 위임 메시지 | 프리로드 스킬 + CLAUDE.md |
+| Method | System prompt | Task | Additional load |
+|--------|---------------|------|-----------------|
+| Skill + `context: fork` | From agent type | SKILL.md content | CLAUDE.md |
+| Subagent + `skills` field | Subagent body | Claude delegation message | Preloaded skills + CLAUDE.md |
 
-### 스킬 예산
+### Skill budget
 
-설명문은 컨텍스트 창의 2%까지 로드 (폴백: 16,000자). 오버라이드:
+Description loaded up to 2% of context window (fallback: 16,000 chars). Override:
 ```bash
 export SLASH_COMMAND_TOOL_CHAR_BUDGET=32000
 ```
 
-### 실전 예제
+### Practical examples
 
-#### `/ship` — 커밋 + PR 한 커맨드로
+#### `/ship` — Commit + PR in one command
 
 ```yaml
 ---
 name: ship
-description: 현재 변경사항을 커밋하고 PR을 생성. 작업 완료 시 사용.
+description: Commit current changes and create a PR. Use when task is done.
 ---
-## 현재 변경사항
+## Current changes
 !`git diff --staged`
 !`git diff`
 
-위 변경사항을 분석하여:
-1. 변경 내용을 요약한 커밋 메시지 작성 (영어, 50자 이내)
-2. git add -A && git commit 실행
-3. 한국어로 PR 제목/본문 작성
-4. gh pr create 실행
+Analyze the changes above and:
+1. Write a commit message summarizing the changes (English, ≤50 chars)
+2. Run git add -A && git commit
+3. Write PR title/body (in your preferred language)
+4. Run gh pr create
 ```
 
-#### `/review` — PR diff 읽고 리뷰 댓글 작성
+#### `/review` — Read PR diff and post review comments
 
 ```yaml
 ---
 name: review
-description: PR 코드 리뷰. /review 123 형식으로 PR 번호 전달.
+description: PR code review. Pass PR number as /review 123.
 argument-hint: "[pr-number]"
 ---
-## PR #$ARGUMENTS 리뷰 요청
+## PR #$ARGUMENTS review request
 
-변경 파일:
+Changed files:
 !`gh pr diff $ARGUMENTS --name-only`
 
-전체 diff:
+Full diff:
 !`gh pr diff $ARGUMENTS`
 
-기존 댓글:
+Existing comments:
 !`gh pr view $ARGUMENTS --comments`
 
-위 내용을 바탕으로 버그/보안/성능/개선점을 분석하여 PR에 코멘트 달아주세요.
+Analyze for bugs, security, performance, and improvements, then post comments on the PR.
 ```
 
 ---
 
 ## 5. Subagents
 
-> 문서: https://code.claude.com/docs/en/sub-agents
+> Docs: https://code.claude.com/docs/en/sub-agents
 
-### 핵심 개념
-- 독립적인 컨텍스트 창을 가진 전문화 에이전트
-- 메인 대화의 컨텍스트 오염 방지
-- 특정 도구/권한만 부여해 제약된 환경에서 실행
+### Key concepts
+- Specialized agents with their own context window
+- Avoid polluting the main conversation context
+- Run in a constrained environment with specific tools/permissions
 
-### 내장 에이전트
-| 에이전트 | 모델 | 도구 | 용도 |
-|---------|------|------|------|
-| Explore | Haiku (빠름) | 읽기 전용 | 파일 탐색, 코드 검색 |
-| Plan | 상속 | 읽기 전용 | Plan mode 리서치 |
-| general-purpose | 상속 | 전체 | 복잡한 다단계 작업 |
-| Bash | 상속 | 터미널 명령 | 별도 컨텍스트 |
-| statusline-setup | Sonnet | `/statusline` 설정 | 상태줄 설정 |
-| Claude Code Guide | Haiku | 기능 Q&A | Claude Code 질문 |
+### Built-in agents
+| Agent | Model | Tools | Purpose |
+|-------|-------|-------|---------|
+| Explore | Haiku (fast) | Read-only | File exploration, code search |
+| Plan | Inherit | Read-only | Plan mode research |
+| general-purpose | Inherit | Full | Complex multi-step tasks |
+| Bash | Inherit | Terminal commands | Separate context |
+| statusline-setup | Sonnet | `/statusline` setup | Status line setup |
+| Claude Code Guide | Haiku | Feature Q&A | Claude Code questions |
 
-### 생성 방법
-- `/agents` — 인터랙티브 UI로 생성/관리
-- `claude agents` — CLI에서 목록 확인
-- 파일 직접 생성: `.claude/agents/<name>.md`
-- `--agents` 플래그로 세션 한정 정의
+### Creating agents
+- `/agents` — Create/manage via interactive UI
+- `claude agents` — List from CLI
+- Create file directly: `.claude/agents/<name>.md`
+- Session-scoped via `--agents` flag
 
-### 에이전트 파일 구조
+### Agent file structure
 ```markdown
 ---
 name: code-reviewer
-description: 코드 리뷰 전문가. 코드 수정 후 즉시 호출.
+description: Expert code reviewer. Invoke right after code changes.
 tools: Read, Grep, Glob, Bash
 model: sonnet
 permissionMode: default
@@ -549,19 +549,19 @@ background: false
 isolation: worktree
 ---
 
-시스템 프롬프트 (마크다운)...
+System prompt (markdown)...
 ```
 
-### 스코프 우선순위
+### Scope priority
 
-| 위치 | 스코프 | 우선순위 |
-|------|--------|---------|
-| `--agents` CLI 플래그 | 현재 세션 | 1 (최고) |
-| `.claude/agents/` | 현재 프로젝트 | 2 |
-| `~/.claude/agents/` | 모든 프로젝트 | 3 |
-| Plugin `agents/` | 플러그인 활성화된 곳 | 4 (최저) |
+| Location | Scope | Priority |
+|----------|-------|----------|
+| `--agents` CLI flag | Current session | 1 (highest) |
+| `.claude/agents/` | Current project | 2 |
+| `~/.claude/agents/` | All projects | 3 |
+| Plugin `agents/` | Where plugin is enabled | 4 (lowest) |
 
-### CLI 정의 서브에이전트
+### CLI-defined subagent
 
 ```bash
 claude --agents '{
@@ -574,56 +574,56 @@ claude --agents '{
 }'
 ```
 
-### 프론트매터 필드 전체
+### Frontmatter fields
 
-| 필드 | 필수 | 설명 |
-|------|------|------|
-| `name` | 예 | 고유 식별자 |
-| `description` | 예 | Claude가 위임 시점 판단에 사용 |
-| `tools` | 아니오 | 도구 allowlist (생략 시 전체 상속) |
-| `disallowedTools` | 아니오 | 제외할 도구 denylist |
-| `model` | 아니오 | `sonnet`, `opus`, `haiku`, `inherit` |
-| `permissionMode` | 아니오 | `default`, `acceptEdits`, `dontAsk`, `bypassPermissions`, `plan` |
-| `maxTurns` | 아니오 | 최대 실행 턴 수 |
-| `skills` | 아니오 | 시작 시 주입할 스킬 목록 |
-| `mcpServers` | 아니오 | 사용 가능한 MCP 서버 |
-| `hooks` | 아니오 | 라이프사이클 훅 |
-| `memory` | 아니오 | `user`, `project`, `local` |
-| `background` | 아니오 | `true`면 항상 백그라운드 실행 |
-| `isolation` | 아니오 | `worktree`로 git worktree 격리 |
+| Field | Required | Description |
+|-------|----------|-------------|
+| `name` | Yes | Unique identifier |
+| `description` | Yes | Used by Claude to decide when to delegate |
+| `tools` | No | Tool allowlist (omit = inherit all) |
+| `disallowedTools` | No | Tool denylist |
+| `model` | No | `sonnet`, `opus`, `haiku`, `inherit` |
+| `permissionMode` | No | `default`, `acceptEdits`, `dontAsk`, `bypassPermissions`, `plan` |
+| `maxTurns` | No | Max execution turns |
+| `skills` | No | Skills to inject at start |
+| `mcpServers` | No | Available MCP servers |
+| `hooks` | No | Lifecycle hooks |
+| `memory` | No | `user`, `project`, `local` |
+| `background` | No | `true` = always run in background |
+| `isolation` | No | `worktree` for git worktree isolation |
 
-### tools 필드 상세
+### tools field details
 
-생략하면 부모 Claude의 도구 전체 상속. 명시하면 allowlist로 동작.
+Omit to inherit all tools from parent Claude. Specify for allowlist behavior.
 
 ```yaml
-# 읽기 전용 (파일 탐색만)
+# Read-only (file exploration only)
 tools: Read, Grep, Glob
 
-# 쓰기 포함
+# Include writes
 tools: Read, Grep, Glob, Edit, Write
 
-# 셸 실행 포함
+# Include shell execution
 tools: Read, Grep, Glob, Edit, Write, Bash
 
-# 특정 Bash 명령만 허용
+# Only specific Bash commands
 tools: Read, Bash(git commit *), Bash(npm test)
 
-# MCP 도구 포함
+# Include MCP tools
 tools: Read, Grep, Glob, Bash, mcp__github
 
-# 특정 에이전트 스폰만 허용
+# Only allow spawning specific agents
 tools: Task(worker, researcher), Read, Bash
 ```
 
-`disallowedTools`로 특정 도구만 제외:
+Exclude specific tools with `disallowedTools`:
 ```yaml
-disallowedTools: Bash, Write  # 나머지는 전부 허용
+disallowedTools: Bash, Write  # All others allowed
 ```
 
-### Skills 프리로드
+### Skills preload
 
-에이전트 시작 시 지정한 스킬의 **전체 내용이 컨텍스트에 자동 주입**됨.
+At agent start, **full content** of specified skills is **auto-injected** into context.
 
 ```yaml
 ---
@@ -631,23 +631,23 @@ name: my-agent
 description: ...
 tools: Read, Grep, Glob
 skills:
-  - ship      # .claude/skills/ship/SKILL.md 전체 주입
-  - review    # .claude/skills/review/SKILL.md 전체 주입
+  - ship      # Full .claude/skills/ship/SKILL.md injected
+  - review    # Full .claude/skills/review/SKILL.md injected
 ---
-시스템 프롬프트...
+System prompt...
 ```
 
-활용 예: `security-reviewer`가 PR diff 읽는 방법(review 스킬)을 미리 알고 있게 하기:
+Example: Give `security-reviewer` the review skill so it knows how to read PR diff:
 ```yaml
 ---
 name: security-reviewer
-description: 보안 취약점 전문 리뷰어
+description: Expert security vulnerability reviewer
 tools: Read, Grep, Glob
 model: opus
 skills:
   - review
 ---
-OWASP Top 10 기준으로 분석하세요.
+Analyze against OWASP Top 10.
 ```
 
 ### Persistent Memory
@@ -655,149 +655,149 @@ OWASP Top 10 기준으로 분석하세요.
 memory: user  # ~/.claude/agent-memory/<name>/
 ```
 
-| 스코프 | 위치 | 사용 시점 |
-|--------|------|-----------|
-| `user` | `~/.claude/agent-memory/<name>/` | 모든 프로젝트 공유 학습 |
-| `project` | `.claude/agent-memory/<name>/` | 프로젝트 한정, 공유 가능 |
-| `local` | `.claude/agent-memory-local/<name>/` | 프로젝트 한정, VCS 제외 |
+| Scope | Location | When used |
+|-------|----------|-----------|
+| `user` | `~/.claude/agent-memory/<name>/` | Shared learning across all projects |
+| `project` | `.claude/agent-memory/<name>/` | Project-scoped, shareable |
+| `local` | `.claude/agent-memory-local/<name>/` | Project-scoped, excluded from VCS |
 
-### 포그라운드 vs 백그라운드
-- **포그라운드**: 완료될 때까지 블로킹, 권한 프롬프트 통과
-- **백그라운드**: 병렬 실행, 시작 전 권한 사전 승인 필요 (Ctrl+B)
+### Foreground vs background
+- **Foreground**: Blocks until done; permission prompts apply
+- **Background**: Runs in parallel; permissions must be pre-approved before start (Ctrl+B)
 
-### 서브에이전트 스폰 제한
+### Subagent spawn limits
 
 ```yaml
-# 특정 에이전트만 스폰 허용
+# Only allow spawning specific agents
 tools: Task(worker, researcher), Read, Bash
 ```
 
 ```json
-// 특정 에이전트 차단
+// Block specific agents
 { "permissions": { "deny": ["Task(Explore)", "Task(my-custom-agent)"] } }
 ```
 
-### 자동 압축
+### Auto-compaction
 
-~95% 용량 도달 시 트리거. 오버라이드:
+Triggers at ~95% capacity. Override:
 ```bash
 export CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=50
 ```
 
-### 언제 쓸까
-- 대량의 출력이 메인 컨텍스트를 오염시킬 때
-- 특정 도구/권한 제한이 필요할 때
-- 독립적으로 완결되는 작업일 때
+### When to use
+- When heavy output would pollute main context
+- When specific tool/permission limits are needed
+- When the task is self-contained
 
-### 실전 예제: 멀티 에이전트 병렬 PR 리뷰
+### Example: Multi-agent parallel PR review
 
-에이전트 파일 3개를 만들어두면, 하나의 요청으로 동시에 실행됨.
+Define three agent files; a single request runs them all in parallel.
 
 ```yaml
 # .claude/agents/security-reviewer.md
 ---
 name: security-reviewer
-description: 보안 취약점 전문 리뷰어. 코드 변경 후 보안 검토 필요 시 호출.
+description: Expert security reviewer. Invoke when security review is needed after code changes.
 tools: Read, Grep, Glob
 model: opus
 ---
-OWASP Top 10 기준으로 코드 취약점을 분석하세요.
-SQL 인젝션, XSS, 인증/인가 이슈에 특히 집중하세요.
+Analyze code for vulnerabilities against OWASP Top 10.
+Focus on SQL injection, XSS, auth/authz issues.
 ```
 
 ```yaml
 # .claude/agents/perf-reviewer.md
 ---
 name: perf-reviewer
-description: 성능 최적화 전문가. N+1 쿼리, 메모리 누수, 불필요한 렌더링 탐지.
+description: Performance optimization expert. Detects N+1 queries, memory leaks, unnecessary renders.
 tools: Read, Grep, Glob
 model: sonnet
 ---
-성능 병목 지점을 분석하세요.
-N+1 쿼리, 불필요한 루프, 캐싱 누락, 메모리 낭비를 집중적으로 찾으세요.
+Analyze performance bottlenecks.
+Look for N+1 queries, unnecessary loops, missing caching, memory waste.
 ```
 
 ```yaml
 # .claude/agents/test-validator.md
 ---
 name: test-validator
-description: 테스트 커버리지 검토. 새 코드에 테스트가 충분한지 확인.
+description: Test coverage reviewer. Verifies new code has sufficient tests.
 tools: Read, Grep, Glob, Bash
 model: haiku
 ---
-변경된 코드에 대응하는 테스트가 충분한지 확인하세요.
-엣지 케이스와 에러 핸들링 테스트 누락 여부를 중점적으로 체크하세요.
+Verify tests adequately cover the changed code.
+Check for missing edge-case and error-handling tests.
 ```
 
-사용법:
+Usage:
 ```
-이 PR 보안/성능/테스트 커버리지 세 관점으로 동시에 리뷰해줘
-→ security-reviewer + perf-reviewer + test-validator 병렬 실행됨
+Review this PR from security, performance, and test coverage in parallel
+→ security-reviewer + perf-reviewer + test-validator run in parallel
 ```
 
 ---
 
 ## 6. Hooks
 
-> 문서: https://code.claude.com/docs/en/hooks
+> Docs: https://code.claude.com/docs/en/hooks
 
-### 핵심 개념
-- 특정 이벤트 발생 시 **확정적으로** 실행되는 자동화 스크립트
-- LLM 판단 없이 항상 동일하게 실행됨 (Skills/Subagents와의 핵심 차이)
-- 3가지 타입: command (셸), prompt (단일 턴 LLM), agent (다중 턴 LLM)
+### Key concepts
+- Automation scripts that run **deterministically** when specific events occur
+- Run the same way every time without LLM judgment (key difference from Skills/Subagents)
+- Three types: command (shell), prompt (single-turn LLM), agent (multi-turn LLM)
 
-### 이벤트 전체 목록 (17개)
+### Full event list (17)
 
-| 이벤트 | 발동 시점 | matcher 대상 |
+| Event | When it fires | matcher target |
 |--------|----------|-------------|
-| `SessionStart` | 세션 시작/재개 | `startup`, `resume`, `clear`, `compact` |
-| `SessionEnd` | 세션 종료 | `clear`, `logout`, `prompt_input_exit` |
-| `UserPromptSubmit` | 프롬프트 제출 시 (처리 전) | — |
-| `PreToolUse` | 도구 실행 전 (차단 가능) | 도구명: `Bash`, `Edit\|Write`, `mcp__.*` |
-| `PermissionRequest` | 권한 대화상자 표시 시 | — |
-| `PostToolUse` | 도구 성공 후 | 도구명 |
-| `PostToolUseFailure` | 도구 실패 후 | 도구명 |
-| `Stop` | Claude 응답 완료 | — |
-| `Notification` | 알림 전송 시 | `permission_prompt`, `idle_prompt` |
-| `SubagentStart` | 서브에이전트 시작 | 에이전트 타입 |
-| `SubagentStop` | 서브에이전트 완료 | — |
-| `TeammateIdle` | 팀원 유휴 상태 전환 | — |
-| `TaskCompleted` | 태스크 완료 표시 | — |
-| `ConfigChange` | 설정 파일 변경 | `user_settings`, `project_settings`, `skills` |
-| `PreCompact` | 컨텍스트 압축 전 | `manual`, `auto` |
-| `WorktreeCreate` | Worktree 생성 시 | — |
-| `WorktreeRemove` | Worktree 제거 시 | — |
+| `SessionStart` | Session start/resume | `startup`, `resume`, `clear`, `compact` |
+| `SessionEnd` | Session end | `clear`, `logout`, `prompt_input_exit` |
+| `UserPromptSubmit` | When prompt submitted (before processing) | — |
+| `PreToolUse` | Before tool runs (can block) | Tool name: `Bash`, `Edit\|Write`, `mcp__.*` |
+| `PermissionRequest` | When permission dialog shown | — |
+| `PostToolUse` | After tool succeeds | Tool name |
+| `PostToolUseFailure` | After tool fails | Tool name |
+| `Stop` | When Claude response completes | — |
+| `Notification` | When notification sent | `permission_prompt`, `idle_prompt` |
+| `SubagentStart` | Subagent starts | Agent type |
+| `SubagentStop` | Subagent completes | — |
+| `TeammateIdle` | Teammate goes idle | — |
+| `TaskCompleted` | Task marked complete | — |
+| `ConfigChange` | Config file changed | `user_settings`, `project_settings`, `skills` |
+| `PreCompact` | Before context compaction | `manual`, `auto` |
+| `WorktreeCreate` | Worktree created | — |
+| `WorktreeRemove` | Worktree removed | — |
 
-### Exit Code 동작
+### Exit code behavior
 
-| Exit Code | 동작 |
-|-----------|------|
-| `0` | 정상 통과. `UserPromptSubmit`/`SessionStart`에서는 stdout가 컨텍스트에 추가 |
-| `2` | 작업 차단. stderr 메시지가 Claude에게 피드백으로 전달 |
-| 기타 | 작업 진행. stderr는 로그에만 기록 |
+| Exit code | Behavior |
+|-----------|----------|
+| `0` | Pass. For `UserPromptSubmit`/`SessionStart`, stdout is added to context |
+| `2` | Block action. stderr message is sent to Claude as feedback |
+| Other | Proceed. stderr only logged |
 
-### Hook 타입
+### Hook types
 
-| 타입 | 설명 |
-|------|------|
-| `command` | 셸 명령 실행 |
-| `prompt` | 단일 턴 LLM 평가 |
-| `agent` | 다중 턴 검증 (도구 접근 가능) |
+| Type | Description |
+|------|-------------|
+| `command` | Run shell command |
+| `prompt` | Single-turn LLM evaluation |
+| `agent` | Multi-turn verification (tool access) |
 
-### 저장 위치
+### Storage locations
 
-| 위치 | 스코프 | 공유 |
-|------|--------|------|
-| `~/.claude/settings.json` | 모든 프로젝트 | 아니오 |
-| `.claude/settings.json` | 현재 프로젝트 | 예 (repo 커밋) |
-| `.claude/settings.local.json` | 현재 프로젝트 | 아니오 (gitignore) |
-| Managed policy settings | 조직 전체 | 예 (관리자) |
-| Plugin `hooks/hooks.json` | 플러그인 활성화 시 | 예 |
-| Skill/Agent frontmatter | 스킬/에이전트 활성 시 | 예 |
+| Location | Scope | Shared |
+|----------|-------|--------|
+| `~/.claude/settings.json` | All projects | No |
+| `.claude/settings.json` | Current project | Yes (repo commit) |
+| `.claude/settings.local.json` | Current project | No (gitignore) |
+| Managed policy settings | Organization | Yes (admin) |
+| Plugin `hooks/hooks.json` | When plugin enabled | Yes |
+| Skill/Agent frontmatter | When skill/agent active | Yes |
 
-### 실용 예제
+### Practical examples
 
-#### 1. 파일 수정 시 테스트 자동 실행 (Claude가 결과 즉시 인지)
+#### 1. Run tests on file edit (Claude sees result immediately)
 
 ```json
 {
@@ -816,10 +816,10 @@ model: haiku
   }
 }
 ```
-Claude가 파일 수정할 때마다 테스트 결과가 자동으로 컨텍스트에 주입됨.
-테스트 실패하면 Claude가 바로 인지하고 자동 수정.
+Each time Claude edits a file, test output is injected into context.
+If tests fail, Claude sees it and can fix automatically.
 
-#### 2. 작업 완료 시 자동 검증 (agent 타입)
+#### 2. Auto-verify on task completion (agent type)
 
 ```json
 {
@@ -838,9 +838,9 @@ Claude가 파일 수정할 때마다 테스트 결과가 자동으로 컨텍스�
   }
 }
 ```
-Claude 응답 완료될 때마다 테스트 돌려서 실패하면 Claude에게 피드백 전달.
+After each Claude response, run tests and send feedback to Claude on failure.
 
-#### 3. 보호 파일 편집 차단
+#### 3. Block editing protected files
 
 ```bash
 #!/bin/bash
@@ -856,7 +856,7 @@ done
 exit 0
 ```
 
-#### 4. 편집 후 자동 포맷
+#### 4. Auto-format after edit
 
 ```json
 {
@@ -876,7 +876,7 @@ exit 0
 }
 ```
 
-#### 5. 압축 후 컨텍스트 재주입
+#### 5. Re-inject context after compact
 
 ```json
 {
@@ -896,7 +896,7 @@ exit 0
 }
 ```
 
-#### 6. macOS 알림
+#### 6. macOS notification
 
 ```json
 {
@@ -916,7 +916,7 @@ exit 0
 }
 ```
 
-#### 7. PreToolUse 구조화된 출력 (도구 제어)
+#### 7. PreToolUse structured output (tool control)
 
 ```json
 {
@@ -927,38 +927,38 @@ exit 0
   }
 }
 ```
-옵션: `"allow"`, `"deny"`, `"ask"`
+Options: `"allow"`, `"deny"`, `"ask"`
 
 ---
 
 ## 7. MCP (Model Context Protocol)
 
-> 문서: https://code.claude.com/docs/en/mcp
+> Docs: https://code.claude.com/docs/en/mcp
 
-### 핵심 개념
-- AI-도구 통합을 위한 오픈 표준
-- 외부 서비스(Jira, Slack, Google Drive, DB 등)를 Claude에 연결
-- 서브에이전트별 개별 MCP 서버 설정 가능
+### Key concepts
+- Open standard for AI–tool integration
+- Connect external services (Jira, Slack, Google Drive, DB, etc.) to Claude
+- Per-subagent MCP server configuration
 
-### 활용 예시
+### Usage examples
 
 ```
-# GitHub 이슈 번호 하나로 구현까지
-@github:issue://234 이 이슈 구현해줘
+# Implement from a single GitHub issue
+@github:issue://234 implement this issue
 
-# 자연어로 DB 쿼리 (postgres MCP 연결 시)
-어제 가입했는데 아직 온보딩 미완료한 사용자 몇 명이야?
+# Natural-language DB query (with postgres MCP)
+How many users signed up yesterday but haven't completed onboarding?
 
-# Jira + GitHub + Slack 원스톱
-@jira:issue://ENG-1234 보고 구현 후 PR 만들고 @slack:channel://eng-team 에 알려줘
+# Jira + GitHub + Slack in one flow
+Read @jira:issue://ENG-1234, implement, open a PR, then notify @slack:channel://eng-team
 
-# MCP 프롬프트를 슬래시 커맨드로
-/mcp__github__create_issue "로그인 버튼 클릭 시 500 에러" high
+# MCP prompt as slash command
+/mcp__github__create_issue "500 error on login button click" high
 ```
 
-### 3가지 전송 방식
+### Three transport types
 
-#### HTTP (권장)
+#### HTTP (recommended)
 ```bash
 claude mcp add --transport http notion https://mcp.notion.com/mcp
 claude mcp add --transport http secure-api https://api.example.com/mcp \
@@ -970,19 +970,19 @@ claude mcp add --transport http secure-api https://api.example.com/mcp \
 claude mcp add --transport sse asana https://mcp.asana.com/sse
 ```
 
-#### 로컬 Stdio
+#### Local Stdio
 ```bash
 claude mcp add --transport stdio --env AIRTABLE_API_KEY=YOUR_KEY airtable \
   -- npx -y airtable-mcp-server
 ```
 
-### 스코프 3단계
+### Three scopes
 
-| 스코프 | 저장소 | 용도 |
-|--------|--------|------|
-| `local` (기본) | `~/.claude.json` (프로젝트 경로 하위) | 개인, 현재 프로젝트만 |
-| `project` | `.mcp.json` (프로젝트 루트) | 팀 공유 (버전 관리) |
-| `user` | `~/.claude.json` | 개인, 모든 프로젝트 |
+| Scope | Storage | Purpose |
+|-------|---------|--------|
+| `local` (default) | `~/.claude.json` (under project path) | Personal, current project only |
+| `project` | `.mcp.json` (project root) | Team shared (version controlled) |
+| `user` | `~/.claude.json` | Personal, all projects |
 
 ```bash
 claude mcp add --transport http stripe --scope local https://mcp.stripe.com
@@ -990,16 +990,16 @@ claude mcp add --transport http paypal --scope project https://mcp.paypal.com/mc
 claude mcp add --transport http hubspot --scope user https://mcp.hubspot.com/anthropic
 ```
 
-### 관리 명령어
+### Management commands
 
 ```bash
-claude mcp list          # 전체 목록
-claude mcp get github    # 특정 서버 상세
-claude mcp remove github # 제거
-/mcp                     # Claude Code 내에서
+claude mcp list          # List all
+claude mcp get github    # Server details
+claude mcp remove github # Remove
+/mcp                     # Inside Claude Code
 ```
 
-### `.mcp.json` 설정 예제
+### `.mcp.json` config example
 
 ```json
 {
@@ -1013,7 +1013,7 @@ claude mcp remove github # 제거
 }
 ```
 
-환경변수 확장:
+Environment variable expansion:
 ```json
 {
   "mcpServers": {
@@ -1028,25 +1028,25 @@ claude mcp remove github # 제거
 }
 ```
 
-### JSON으로 추가
+### Add via JSON
 
 ```bash
 claude mcp add-json weather-api '{"type":"http","url":"https://api.weather.com/mcp","headers":{"Authorization":"Bearer token"}}'
 ```
 
-### Claude Desktop에서 가져오기
+### Import from Claude Desktop
 
 ```bash
 claude mcp add-from-claude-desktop
 ```
 
-### Claude Code를 MCP 서버로 사용
+### Use Claude Code as MCP server
 
 ```bash
 claude mcp serve
 ```
 
-Claude Desktop 설정:
+Claude Desktop config:
 ```json
 {
   "mcpServers": {
@@ -1060,7 +1060,7 @@ Claude Desktop 설정:
 }
 ```
 
-### OAuth 인증
+### OAuth authentication
 
 ```bash
 claude mcp add --transport http \
@@ -1068,21 +1068,21 @@ claude mcp add --transport http \
   my-server https://mcp.example.com/mcp
 ```
 
-CI 환경:
+CI environment:
 ```bash
 MCP_CLIENT_SECRET=your-secret claude mcp add --transport http \
   --client-id your-client-id --client-secret --callback-port 8080 \
   my-server https://mcp.example.com/mcp
 ```
 
-### 리소스 참조 (`@` 문법)
+### Resource reference (`@` syntax)
 
 ```
-> @github:issue://123 분석하고 수정 제안해줘
-> @postgres:schema://users와 @docs:file://database/user-model 비교
+> @github:issue://123 analyze and suggest fixes
+> Compare @postgres:schema://users with @docs:file://database/user-model
 ```
 
-### MCP 프롬프트를 커맨드로 사용
+### Use MCP prompts as commands
 
 ```
 > /mcp__github__list_prs
@@ -1090,31 +1090,31 @@ MCP_CLIENT_SECRET=your-secret claude mcp add --transport http \
 > /mcp__jira__create_issue "Bug in login flow" high
 ```
 
-### 출력 제한
+### Output limits
 
-| 설정 | 기본값 |
-|------|--------|
-| 경고 임계값 | 10,000 토큰 |
-| 최대 출력 | 25,000 토큰 |
-| 커스텀 | `export MAX_MCP_OUTPUT_TOKENS=50000` |
+| Setting | Default |
+|---------|---------|
+| Warning threshold | 10,000 tokens |
+| Max output | 25,000 tokens |
+| Custom | `export MAX_MCP_OUTPUT_TOKENS=50000` |
 
 ### Tool Search
 
-| 값 | 동작 |
-|----|------|
-| `auto` | MCP 도구가 컨텍스트의 10% 초과 시 활성화 (기본) |
-| `auto:<N>` | 커스텀 임계값 비율 |
-| `true` | 항상 활성화 |
-| `false` | 비활성화, 모든 도구 사전 로드 |
+| Value | Behavior |
+|-------|----------|
+| `auto` | Enable when MCP tools exceed 10% of context (default) |
+| `auto:<N>` | Custom threshold ratio |
+| `true` | Always on |
+| `false` | Off; all tools loaded upfront |
 
 ```bash
 ENABLE_TOOL_SEARCH=auto:5 claude
 ENABLE_TOOL_SEARCH=false claude
 ```
 
-### 관리자 MCP 설정
+### Managed MCP settings
 
-파일 위치:
+File locations:
 - macOS: `/Library/Application Support/ClaudeCode/managed-mcp.json`
 - Linux: `/etc/claude-code/managed-mcp.json`
 
@@ -1139,42 +1139,42 @@ Allowlist/Denylist:
   ]
 }
 ```
-Denylist가 allowlist보다 항상 우선. URL 패턴에 `*` 와일드카드 지원.
+Denylist always overrides allowlist. URL patterns support `*` wildcard.
 
 ---
 
 ## 8. Plugins
 
-> 문서: https://code.claude.com/docs/en/plugins
+> Docs: https://code.claude.com/docs/en/plugins
 
-### 핵심 개념
-- Skills + Subagents + Hooks + MCP를 패키징해 배포하는 단위
-- Standalone(`.claude/` 직접) vs Plugin(패키지화) 선택 가능
+### Key concepts
+- Packaging unit for Skills + Subagents + Hooks + MCP for distribution
+- Choose Standalone (`.claude/` directly) or Plugin (packaged)
 
 ### Standalone vs Plugin
 
-| 방식 | 스킬명 | 적합한 경우 |
-|------|--------|------------|
-| Standalone (`.claude/` 디렉토리) | `/hello` | 개인 워크플로우, 프로젝트 한정, 빠른 실험 |
-| Plugin (`.claude-plugin/plugin.json`) | `/plugin-name:hello` | 공유, 배포, 버전 관리, 재사용 |
+| Approach | Skill name | Best for |
+|----------|------------|----------|
+| Standalone (`.claude/` dir) | `/hello` | Personal workflow, project-only, quick experiments |
+| Plugin (`.claude-plugin/plugin.json`) | `/plugin-name:hello` | Sharing, distribution, versioning, reuse |
 
-### 디렉토리 구조
+### Directory structure
 
 ```
 my-plugin/
 ├── .claude-plugin/
-│   └── plugin.json          # 매니페스트 (필수)
-├── commands/                # Skills (마크다운 파일)
-├── agents/                  # 커스텀 에이전트 정의
+│   └── plugin.json          # Manifest (required)
+├── commands/                # Skills (markdown files)
+├── agents/                  # Custom agent definitions
 ├── skills/                  # Agent Skills (SKILL.md)
 ├── hooks/
-│   └── hooks.json           # 이벤트 핸들러
-├── .mcp.json                # MCP 서버 설정
-├── .lsp.json                # LSP 서버 설정
-└── settings.json            # 플러그인 활성화 시 기본 설정
+│   └── hooks.json           # Event handlers
+├── .mcp.json                # MCP server config
+├── .lsp.json                # LSP server config
+└── settings.json            # Default settings when plugin enabled
 ```
 
-### plugin.json 매니페스트
+### plugin.json manifest
 
 ```json
 {
@@ -1185,14 +1185,14 @@ my-plugin/
 }
 ```
 
-### 로컬 테스트
+### Local testing
 
 ```bash
 claude --plugin-dir ./my-plugin
 claude --plugin-dir ./plugin-one --plugin-dir ./plugin-two
 ```
 
-### LSP 서버 설정 (`.lsp.json`)
+### LSP server config (`.lsp.json`)
 
 ```json
 {
@@ -1204,7 +1204,7 @@ claude --plugin-dir ./plugin-one --plugin-dir ./plugin-two
 }
 ```
 
-### 기본 설정 (`settings.json`)
+### Default settings (`settings.json`)
 
 ```json
 {
@@ -1212,7 +1212,7 @@ claude --plugin-dir ./plugin-one --plugin-dir ./plugin-two
 }
 ```
 
-### 플러그인 내 MCP 서버
+### MCP server in plugin
 
 `.mcp.json`:
 ```json
@@ -1225,7 +1225,7 @@ claude --plugin-dir ./plugin-one --plugin-dir ./plugin-two
 }
 ```
 
-또는 `plugin.json` 인라인:
+Or inline in `plugin.json`:
 ```json
 {
   "name": "my-plugin",
@@ -1238,7 +1238,7 @@ claude --plugin-dir ./plugin-one --plugin-dir ./plugin-two
 }
 ```
 
-### Standalone → Plugin 마이그레이션
+### Standalone → Plugin migration
 
 ```bash
 mkdir -p my-plugin/.claude-plugin
@@ -1248,7 +1248,7 @@ cp -r .claude/skills my-plugin/
 mkdir my-plugin/hooks
 ```
 
-Hooks 마이그레이션 — `.claude/settings.json`에서 `my-plugin/hooks/hooks.json`으로 복사:
+Hooks migration — copy from `.claude/settings.json` to `my-plugin/hooks/hooks.json`:
 ```json
 {
   "hooks": {
@@ -1262,18 +1262,18 @@ Hooks 마이그레이션 — `.claude/settings.json`에서 `my-plugin/hooks/hook
 }
 ```
 
-### 공식 마켓플레이스 플러그인 목록
+### Official marketplace plugins
 
-`/plugin` → Discover 탭 또는 아래 명령어로 설치:
+Install via `/plugin` → Discover tab or:
 ```bash
-/plugin install 플러그인명@claude-plugins-official
+/plugin install plugin-name@claude-plugins-official
 ```
 
-#### Code Intelligence (LSP) — 언어별 실시간 오류 감지
+#### Code Intelligence (LSP) — Real-time errors per language
 
-설치하면 Claude가 파일 수정 후 **타입 에러/import 오류를 자동 감지**해 같은 턴에 바로 수정.
+When installed, Claude **auto-detects type/import errors** after file edits and can fix them in the same turn.
 
-| 플러그인 | 언어 | 필요 바이너리 |
+| Plugin | Language | Required binary |
 |---------|------|-------------|
 | `typescript-lsp` | TypeScript/JavaScript | `typescript-language-server` |
 | `pyright-lsp` | Python | `pyright-langserver` |
@@ -1285,100 +1285,100 @@ Hooks 마이그레이션 — `.claude/settings.json`에서 `my-plugin/hooks/hook
 | `swift-lsp` | Swift | `sourcekit-lsp` |
 | `php-lsp` | PHP | `intelephense` |
 
-#### External Integrations (MCP 번들)
+#### External Integrations (MCP bundles)
 
-수동 MCP 설정 없이 바로 연결:
+Connect without manual MCP setup:
 
-| 카테고리 | 플러그인 |
-|---------|---------|
-| 소스 컨트롤 | `github`, `gitlab` |
-| 프로젝트 관리 | `atlassian` (Jira+Confluence), `asana`, `linear`, `notion` |
-| 디자인 | `figma` |
-| 인프라 | `vercel`, `firebase`, `supabase` |
-| 커뮤니케이션 | `slack` |
-| 모니터링 | `sentry` |
+| Category | Plugins |
+|----------|---------|
+| Source control | `github`, `gitlab` |
+| Project management | `atlassian` (Jira+Confluence), `asana`, `linear`, `notion` |
+| Design | `figma` |
+| Infrastructure | `vercel`, `firebase`, `supabase` |
+| Communication | `slack` |
+| Monitoring | `sentry` |
 
 #### Development Workflows
 
-| 플러그인 | 설명 |
-|---------|------|
-| `commit-commands` | git 커밋/푸시/PR 워크플로우 |
-| `pr-review-toolkit` | PR 리뷰 전용 에이전트 |
-| `agent-sdk-dev` | Claude Agent SDK 개발 도구 |
-| `plugin-dev` | 플러그인 제작 도구 |
+| Plugin | Description |
+|--------|-------------|
+| `commit-commands` | git commit/push/PR workflow |
+| `pr-review-toolkit` | PR review–focused agent |
+| `agent-sdk-dev` | Claude Agent SDK dev tools |
+| `plugin-dev` | Plugin authoring tools |
 
 #### Output Styles
 
-| 플러그인 | 설명 |
-|---------|------|
-| `explanatory-output-style` | 코드 선택 이유를 함께 설명하는 모드 |
-| `learning-output-style` | 학습자용 인터랙티브 모드 |
+| Plugin | Description |
+|--------|-------------|
+| `explanatory-output-style` | Explains why code was chosen |
+| `learning-output-style` | Interactive mode for learners |
 
-### 마켓플레이스 관리
+### Marketplace management
 
 ```bash
-# 공식 마켓플레이스는 자동 등록. 추가 마켓플레이스:
+# Official marketplace is auto-registered. Add others:
 /plugin marketplace add anthropics/claude-code   # GitHub repo
 /plugin marketplace add https://example.com/marketplace.json
 
-# 목록 / 업데이트 / 제거
+# List / update / remove
 /plugin marketplace list
 /plugin marketplace update marketplace-name
 /plugin marketplace remove marketplace-name
 ```
 
-### 플러그인 관리
+### Plugin management
 
 ```bash
 /plugin install typescript-lsp@claude-plugins-official
-/plugin install typescript-lsp@claude-plugins-official --scope project  # 팀 공유
+/plugin install typescript-lsp@claude-plugins-official --scope project  # Team shared
 
 /plugin disable plugin-name@marketplace-name
 /plugin enable  plugin-name@marketplace-name
 /plugin uninstall plugin-name@marketplace-name
 ```
 
-스코프:
-- `user` (기본) — 내 모든 프로젝트
-- `project` — 팀 공유 (`.claude/settings.json`에 기록)
-- `local` — 이 프로젝트만, 비공유
+Scopes:
+- `user` (default) — All my projects
+- `project` — Team shared (written to `.claude/settings.json`)
+- `local` — This project only, not shared
 
 ---
 
-# Part 3: 고급 기능
+# Part 3: Advanced features
 
 ---
 
-## 9. Agent Teams (실험적)
+## 9. Agent Teams (experimental)
 
-> 문서: https://code.claude.com/docs/en/agent-teams
-> 활성화: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+> Docs: https://code.claude.com/docs/en/agent-teams
+> Enable: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
 
-### 핵심 개념
-- 팀원들이 **서로 직접 통신**하며 협력 (Subagents와의 핵심 차이)
-- 공유 태스크 리스트로 자율 조율
-- 각 팀원이 독립적인 컨텍스트 창 보유
+### Key concepts
+- Teammates **communicate directly** with each other (key difference from Subagents)
+- Self-coordination via shared task list
+- Each teammate has its own context window
 
 ### Subagents vs Agent Teams
 
 | | Subagents | Agent Teams |
 |---|---|---|
-| 컨텍스트 | 자체 창; 결과만 반환 | 자체 창; 완전 독립 |
-| 통신 | 메인에게만 보고 | 팀원끼리 직접 메시지 |
-| 조율 | 메인이 관리 | 공유 태스크 리스트로 자율 |
-| 용도 | 결과만 중요한 집중 작업 | 토론/협업 필요한 복잡한 작업 |
-| 토큰 비용 | 낮음 | 높음 |
+| Context | Own window; returns result only | Own window; fully independent |
+| Communication | Reports to main only | Teammates message each other |
+| Coordination | Main manages | Shared task list, self-coordinated |
+| Use case | Focused work where only result matters | Complex work needing discussion/collab |
+| Token cost | Lower | Higher |
 
-### 구성요소
+### Components
 
-| 컴포넌트 | 역할 |
-|----------|------|
-| Team lead | 팀 생성, 팀원 스폰, 조율 |
-| Teammates | 독립적인 Claude Code 인스턴스 |
-| Task list | 공유 작업 목록 (claim/complete) |
-| Mailbox | 에이전트 간 메시징 시스템 |
+| Component | Role |
+|-----------|------|
+| Team lead | Create team, spawn teammates, coordinate |
+| Teammates | Independent Claude Code instances |
+| Task list | Shared work list (claim/complete) |
+| Mailbox | Inter-agent messaging |
 
-### 활성화
+### Enabling
 
 ```json
 // settings.json
@@ -1389,12 +1389,12 @@ Hooks 마이그레이션 — `.claude/settings.json`에서 `my-plugin/hooks/hook
 }
 ```
 
-### 디스플레이 모드
+### Display modes
 
-| 모드 | 설명 |
-|------|------|
-| **in-process** | 메인 터미널에서 Shift+Down으로 팀원 전환 |
-| **split panes** | tmux 또는 iTerm2로 분할 화면 |
+| Mode | Description |
+|------|-------------|
+| **in-process** | Switch teammates with Shift+Down in main terminal |
+| **split panes** | Split panes via tmux or iTerm2 |
 
 ```json
 { "teammateMode": "in-process" }
@@ -1403,86 +1403,86 @@ Hooks 마이그레이션 — `.claude/settings.json`에서 `my-plugin/hooks/hook
 claude --teammate-mode in-process
 ```
 
-### 저장 위치
+### Storage
 
-- 팀 설정: `~/.claude/teams/{team-name}/config.json`
-- 태스크 리스트: `~/.claude/tasks/{team-name}/`
+- Team config: `~/.claude/teams/{team-name}/config.json`
+- Task list: `~/.claude/tasks/{team-name}/`
 
-### 강점 케이스
-- 병렬 코드 리뷰 (보안 / 성능 / 테스트 각각)
-- 경쟁 가설로 버그 디버깅
-- 프론트/백엔드/테스트 동시 작업
+### Strong use cases
+- Parallel code review (security / perf / tests)
+- Bug debugging with competing hypotheses
+- Frontend/backend/test work in parallel
 
-### 제한사항 (실험적)
-- 세션 재개 시 in-process 팀원 복원 불가
-- 태스크 상태 지연 가능성
-- 종료가 느릴 수 있음
-- 세션당 하나의 팀만 가능
-- 중첩 팀 불가 (팀원이 또 팀 못 만듦)
-- 리더 고정 (변경 불가)
-- 스폰 시 권한 설정
-- split pane은 tmux/iTerm2 필요
+### Limitations (experimental)
+- In-process teammates not restored on session resume
+- Task state may be delayed
+- Shutdown can be slow
+- One team per session
+- No nested teams (teammate can't create another team)
+- Leader is fixed (cannot change)
+- Permissions set at spawn
+- Split pane requires tmux or iTerm2
 
 ---
 
 ## 10. Headless / Agent SDK
 
-> 문서: https://code.claude.com/docs/en/headless
+> Docs: https://code.claude.com/docs/en/headless
 
-### 핵심 개념
-- `-p` 플래그로 프로그래밍 방식 실행 (비대화형)
-- CI/CD, 스크립트, 파이프라인에서 활용
-- 구조화된 출력(JSON, 스트림) 지원
+### Key concepts
+- Programmatic execution via `-p` flag (non-interactive)
+- Use in CI/CD, scripts, pipelines
+- Structured output (JSON, stream) supported
 
-### 기본 사용법
+### Basic usage
 
 ```bash
 claude -p "Find and fix the bug in auth.py" --allowedTools "Read,Edit,Bash"
 ```
 
-### 구조화된 출력
+### Structured output
 
 ```bash
-# 일반 텍스트 (기본)
+# Plain text (default)
 claude -p "Summarize this project" --output-format text
 
-# 메타데이터 포함 JSON
+# JSON with metadata
 claude -p "Summarize this project" --output-format json
 
-# JSON 스키마로 구조화
+# Structured with JSON schema
 claude -p "Extract the main function names from auth.py" \
   --output-format json \
   --json-schema '{"type":"object","properties":{"functions":{"type":"array","items":{"type":"string"}}},"required":["functions"]}'
 
-# 특정 필드 추출
+# Extract specific field
 claude -p "Summarize this project" --output-format json | jq -r '.result'
 ```
 
-### 스트리밍 응답
+### Streaming response
 
 ```bash
 claude -p "Explain recursion" --output-format stream-json --verbose --include-partial-messages
 
-# 텍스트 델타만 필터링
+# Filter text deltas only
 claude -p "Write a poem" --output-format stream-json --verbose --include-partial-messages | \
   jq -rj 'select(.type == "stream_event" and .event.delta.type? == "text_delta") | .event.delta.text'
 ```
 
-### 도구 자동 승인 (`--allowedTools`)
+### Auto-approve tools (`--allowedTools`)
 
 ```bash
 claude -p "Run the test suite and fix any failures" \
   --allowedTools "Bash,Read,Edit"
 ```
 
-### 커밋 자동화 예시
+### Commit automation example
 
 ```bash
 claude -p "Look at my staged changes and create an appropriate commit" \
   --allowedTools "Bash(git diff *),Bash(git log *),Bash(git status *),Bash(git commit *)"
 ```
 
-### 시스템 프롬프트 커스터마이즈
+### Customize system prompt
 
 ```bash
 gh pr diff "$1" | claude -p \
@@ -1490,28 +1490,28 @@ gh pr diff "$1" | claude -p \
   --output-format json
 ```
 
-### 세션 계속
+### Continue session
 
 ```bash
-# 가장 최근 세션 이어서
+# Resume most recent session
 claude -p "Review this codebase for performance issues"
 claude -p "Now focus on the database queries" --continue
 
-# 특정 세션 재개
+# Resume specific session
 session_id=$(claude -p "Start a review" --output-format json | jq -r '.session_id')
 claude -p "Continue that review" --resume "$session_id"
 ```
 
-### Unix 파이프 패턴
+### Unix pipe patterns
 
 ```bash
-# 빌드 에러 분석
+# Analyze build error
 cat build-error.txt | claude -p 'concisely explain the root cause' > output.txt
 
-# 보안 리뷰
+# Security review
 git diff main --name-only | claude -p "review these changed files for security issues"
 
-# npm 스크립트로 활용
+# Use in npm script
 # package.json
 {
   "scripts": {
@@ -1520,13 +1520,13 @@ git diff main --name-only | claude -p "review these changed files for security i
 }
 ```
 
-### CI/CD 활용 예시
+### CI/CD usage examples
 
 ```bash
-# 번역 자동화
+# Translation automation
 claude -p "translate new strings into French and raise a PR for review"
 
-# PR 보안 리뷰
+# PR security review
 gh pr diff "$1" | claude -p \
   --append-system-prompt "You are a security engineer. Review for vulnerabilities." \
   --output-format json
@@ -1536,11 +1536,11 @@ gh pr diff "$1" | claude -p \
 
 ## 11. Common Workflows
 
-> 문서: https://code.claude.com/docs/en/common-workflows
+> Docs: https://code.claude.com/docs/en/common-workflows
 
-### 5대 워크플로우
+### Five main workflows
 
-#### 1. 코드베이스 이해
+#### 1. Understand codebase
 
 ```
 > give me an overview of this codebase
@@ -1550,7 +1550,7 @@ gh pr diff "$1" | claude -p \
 > trace the login process from front-end to database
 ```
 
-#### 2. 버그 수정
+#### 2. Fix bugs
 
 ```
 > I'm seeing an error when I run npm test
@@ -1558,7 +1558,7 @@ gh pr diff "$1" | claude -p \
 > update user.ts to add the null check you suggested
 ```
 
-#### 3. 리팩토링
+#### 3. Refactoring
 
 ```
 > find deprecated API usage in our codebase
@@ -1567,33 +1567,33 @@ gh pr diff "$1" | claude -p \
 > run tests for the refactored code
 ```
 
-#### 4. 테스트 작성
+#### 4. Write tests
 
-검증 기준 포함 프롬프트가 핵심:
+Prompts with verification criteria are key:
 ```
 > write tests for the auth module. run them after implementation.
 > add edge case tests for null/undefined inputs in validator.ts
 ```
 
-#### 5. PR 생성
+#### 5. Create PR
 
 ```
 > /commit-push-pr
 > create a pr
 ```
-`gh pr create`로 생성된 세션은 PR에 연결됨. `claude --from-pr <number>`로 재개 가능.
+Session created via `gh pr create` is linked to the PR. Resume with `claude --from-pr <number>`.
 
 ### Plan Mode
 
 ```bash
-# CLI에서 시작
+# Start from CLI
 claude --permission-mode plan
 
-# 세션 중 토글: Shift+Tab
-# 텍스트 에디터에서 계획 열기: Ctrl+G
+# Toggle during session: Shift+Tab
+# Open plan in text editor: Ctrl+G
 ```
 
-기본값으로 설정:
+Set as default:
 ```json
 {
   "permissions": {
@@ -1602,91 +1602,91 @@ claude --permission-mode plan
 }
 ```
 
-### Extended Thinking 설정
+### Extended Thinking settings
 
-| 스코프 | 설정 방법 | 상세 |
-|--------|----------|------|
-| 노력 수준 | `/model` 또는 `CLAUDE_CODE_EFFORT_LEVEL` | low, medium, high (기본) |
-| 토글 단축키 | `Option+T` (macOS) / `Alt+T` (Win/Linux) | 현재 세션 토글 |
-| 글로벌 기본 | `/config` | 모든 프로젝트 기본값 |
-| 토큰 예산 제한 | `MAX_THINKING_TOKENS` 환경변수 | 특정 토큰으로 제한 |
+| Scope | How to set | Details |
+|-------|------------|---------|
+| Effort level | `/model` or `CLAUDE_CODE_EFFORT_LEVEL` | low, medium, high (default) |
+| Toggle shortcut | `Option+T` (macOS) / `Alt+T` (Win/Linux) | Toggle for current session |
+| Global default | `/config` | Default for all projects |
+| Token budget limit | `MAX_THINKING_TOKENS` env var | Cap at specific tokens |
 
-### 이미지 분석
+### Image analysis
 
-- 드래그 앤 드롭으로 Claude Code 창에 넣기
-- `Ctrl+V`로 복사/붙여넣기
-- 경로 제공: "Analyze this image: /path/to/image.png"
+- Drag and drop into Claude Code window
+- Paste with `Ctrl+V`
+- By path: "Analyze this image: /path/to/image.png"
 
-### 세션 관리
+### Session management
 
 ```bash
-claude --continue    # 가장 최근 세션 재개
-claude --resume      # 최근 세션 목록에서 선택
-claude --from-pr 123 # PR 연결 세션 재개
+claude --continue    # Resume most recent session
+claude --resume      # Pick from recent sessions
+claude --from-pr 123 # Resume session linked to PR
 ```
 
-세션 선택기 단축키:
-| 단축키 | 동작 |
-|--------|------|
-| Up/Down | 세션 탐색 |
-| Right/Left | 그룹 확장/축소 |
-| Enter | 선택 및 재개 |
-| P | 세션 미리보기 |
-| R | 세션 이름 변경 |
-| / | 검색 필터 |
-| A | 현재 디렉토리 / 전체 프로젝트 토글 |
-| B | 현재 브랜치 필터 |
+Session picker shortcuts:
+| Shortcut | Action |
+|----------|--------|
+| Up/Down | Navigate sessions |
+| Right/Left | Expand/collapse group |
+| Enter | Select and resume |
+| P | Session preview |
+| R | Rename session |
+| / | Search filter |
+| A | Toggle current dir / full project |
+| B | Current branch filter |
 
-### Git Worktree 병렬 세션
+### Git Worktree parallel sessions
 
 ```bash
 claude --worktree feature-auth
 claude --worktree bugfix-123
-claude --worktree  # 자동 이름 생성
+claude --worktree  # Auto-generated name
 ```
 
-- `<repo>/.claude/worktrees/<name>`에 생성
-- 기본 원격 브랜치에서 분기
-- 서브에이전트: `isolation: worktree` 프론트매터로 사용
+- Created at `<repo>/.claude/worktrees/<name>`
+- Branches from default remote branch
+- Subagent: use `isolation: worktree` in frontmatter
 
-### `@` 문법 참조
+### `@` syntax reference
 
 ```
 > explain the main architecture in @src/index.ts
 > review @src/middleware/rateLimiter.ts
 ```
 
-### 알림 Hook 설정
+### Notification hook matchers
 
-| matcher | 발동 시점 |
-|---------|----------|
-| `permission_prompt` | Claude가 승인 필요 |
-| `idle_prompt` | Claude 완료, 다음 입력 대기 |
-| `auth_success` | 인증 완료 |
-| `elicitation_dialog` | Claude가 질문 중 |
-
----
-
-# Part 4: 플랫폼 & 통합
+| matcher | When it fires |
+|---------|----------------|
+| `permission_prompt` | Claude needs approval |
+| `idle_prompt` | Claude done, waiting for next input |
+| `auth_success` | Auth completed |
+| `elicitation_dialog` | Claude is asking a question |
 
 ---
 
-## 12. 플랫폼
+# Part 4: Platform & integration
 
-> 문서: https://code.claude.com/docs/en/overview
+---
 
-### 사용 가능한 표면
+## 12. Platform
 
-| 목적 | 최적 옵션 |
-|------|-----------|
-| 다른 기기에서 로컬 세션 이어받기 | Remote Control |
-| 로컬 시작 → 모바일 계속 | Web 또는 Claude iOS 앱 |
-| PR 리뷰, 이슈 트리아지 자동화 | GitHub Actions / GitLab CI/CD |
-| Slack 버그 리포트 → PR | Slack |
-| 라이브 웹앱 디버깅 | Chrome |
-| 커스텀 에이전트 빌드 | Agent SDK |
+> Docs: https://code.claude.com/docs/en/overview
 
-### 설치 방법
+### Available surfaces
+
+| Goal | Best option |
+|------|-------------|
+| Continue local session on another device | Remote Control |
+| Start locally → continue on mobile | Web or Claude iOS app |
+| Automate PR review, issue triage | GitHub Actions / GitLab CI/CD |
+| Slack bug report → PR | Slack |
+| Live web app debugging | Chrome |
+| Build custom agents | Agent SDK |
+
+### Installation
 
 ```bash
 # macOS, Linux, WSL
@@ -1702,32 +1702,32 @@ brew install --cask claude-code
 winget install Anthropic.ClaudeCode
 ```
 
-### IDE 통합
+### IDE integration
 
-| IDE | 설치 방법 |
-|-----|----------|
-| **VS Code** | Extensions에서 "Claude Code" 검색 → Command Palette > "Open in New Tab" |
-| **JetBrains** | JetBrains Marketplace에서 플러그인 설치 (IntelliJ, PyCharm, WebStorm 등) |
-| **Desktop** | macOS (Intel + Apple Silicon), Windows (x64, ARM64) 다운로드 |
+| IDE | How to install |
+|-----|----------------|
+| **VS Code** | Search Extensions for "Claude Code" → Command Palette > "Open in New Tab" |
+| **JetBrains** | Install from JetBrains Marketplace (IntelliJ, PyCharm, WebStorm, etc.) |
+| **Desktop** | Download for macOS (Intel + Apple Silicon), Windows (x64, ARM64) |
 
 ### Web
 
-[claude.ai/code](https://claude.ai/code)에서 브라우저 실행. 로컬 설치 불필요.
+Run in browser at [claude.ai/code](https://claude.ai/code). No local install needed.
 
-### 크로스 표면 기능
+### Cross-surface features
 
-| 기능 | 설명 |
-|------|------|
-| `/teleport` | Web/iOS 세션을 터미널로 당기기 |
-| `/desktop` | 터미널 세션을 Desktop 앱으로 넘기기 |
-| `@Claude` (Slack) | 채팅에서 PR 받기 |
-| Remote Control | 폰에서 계속하기 |
+| Feature | Description |
+|---------|-------------|
+| `/teleport` | Pull Web/iOS session into terminal |
+| `/desktop` | Hand off terminal session to Desktop app |
+| `@Claude` (Slack) | Get PR from chat |
+| Remote Control | Continue on phone |
 
-모든 표면이 동일한 CLAUDE.md 파일, 설정, MCP 서버를 공유.
+All surfaces share the same CLAUDE.md, settings, and MCP servers.
 
-### 관련 문서 링크
+### Doc links
 
-| 기능 | 문서 |
+| Feature | Docs |
 |------|------|
 | Remote Control | [remote-control](https://code.claude.com/docs/en/remote-control) |
 | Web | [claude-code-on-the-web](https://code.claude.com/docs/en/claude-code-on-the-web) |
@@ -1740,31 +1740,31 @@ winget install Anthropic.ClaudeCode
 
 > GitHub Actions: https://code.claude.com/docs/en/github-actions
 > GitLab CI/CD: https://code.claude.com/docs/en/gitlab-ci-cd
-> Action 레포: https://github.com/anthropics/claude-code-action
+> Action repo: https://github.com/anthropics/claude-code-action
 
 ### GitHub Actions
 
-#### 핵심 개념
+#### Key concepts
 
-- `@claude` 멘션으로 PR/이슈에서 코드 분석, PR 생성, 기능 구현, 버그 수정
-- CLAUDE.md 가이드라인과 기존 코드 패턴을 준수
-- Agent SDK 기반으로 커스텀 자동화 워크플로우 구축 가능
-- 기본 모델은 Sonnet, Opus 사용 시 `--model claude-opus-4-6` 설정
+- `@claude` mention in PR/issue for code analysis, PR creation, feature implementation, bug fixes
+- Follows CLAUDE.md guidelines and existing code patterns
+- Can build custom automation workflows on Agent SDK
+- Default model is Sonnet; for Opus use `--model claude-opus-4-6`
 
-#### 빠른 설정
+#### Quick setup
 
 ```bash
-# Claude Code 터미널에서 실행 (가장 쉬운 방법)
+# Run in Claude Code terminal (easiest)
 /install-github-app
 ```
-> 레포 admin 권한 필요. GitHub App이 Contents, Issues, Pull requests에 대한 Read & Write 권한 요청.
+> Repo admin required. GitHub App requests Read & Write on Contents, Issues, Pull requests.
 
-**수동 설정**:
-1. [Claude GitHub App](https://github.com/apps/claude) 설치
-2. `ANTHROPIC_API_KEY`를 레포 Secrets에 추가
-3. [examples/claude.yml](https://github.com/anthropics/claude-code-action/blob/main/examples/claude.yml)을 `.github/workflows/`에 복사
+**Manual setup**:
+1. Install [Claude GitHub App](https://github.com/apps/claude)
+2. Add `ANTHROPIC_API_KEY` to repo Secrets
+3. Copy [examples/claude.yml](https://github.com/anthropics/claude-code-action/blob/main/examples/claude.yml) to `.github/workflows/`
 
-#### 기본 워크플로우
+#### Basic workflow
 
 ```yaml
 name: Claude Code
@@ -1780,10 +1780,10 @@ jobs:
       - uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          # @claude 멘션에 자동 응답
+          # Auto-respond to @claude mentions
 ```
 
-#### Skills 활용 워크플로우
+#### Workflow using Skills
 
 ```yaml
 name: Code Review
@@ -1801,7 +1801,7 @@ jobs:
           claude_args: "--max-turns 5"
 ```
 
-#### 스케줄 자동화 워크플로우
+#### Scheduled automation workflow
 
 ```yaml
 name: Daily Report
@@ -1819,32 +1819,32 @@ jobs:
           claude_args: "--model opus"
 ```
 
-#### Action 파라미터 (v1)
+#### Action parameters (v1)
 
-| 파라미터 | 설명 | 필수 |
-|----------|------|------|
-| `prompt` | Claude에 대한 지시 (텍스트 또는 `/review` 같은 스킬) | 아니오* |
-| `claude_args` | Claude Code CLI 인수 전달 | 아니오 |
-| `anthropic_api_key` | Claude API 키 | 예** |
-| `github_token` | GitHub API 접근 토큰 | 아니오 |
-| `trigger_phrase` | 트리거 문구 (기본: "@claude") | 아니오 |
-| `use_bedrock` | AWS Bedrock 사용 | 아니오 |
-| `use_vertex` | Google Vertex AI 사용 | 아니오 |
+| Parameter | Description | Required |
+|-----------|-------------|----------|
+| `prompt` | Instruction for Claude (text or skill like `/review`) | No* |
+| `claude_args` | Pass-through args to Claude Code CLI | No |
+| `anthropic_api_key` | Claude API key | Yes** |
+| `github_token` | GitHub API access token | No |
+| `trigger_phrase` | Trigger phrase (default: "@claude") | No |
+| `use_bedrock` | Use AWS Bedrock | No |
+| `use_vertex` | Use Google Vertex AI | No |
 
-\*prompt 생략 시 이슈/PR 댓글에서 트리거 문구에 응답
-\*\*Claude API 직접 사용 시 필수, Bedrock/Vertex 사용 시 불필요
+\*If prompt omitted, respond to trigger phrase in issue/PR comment
+\*\*Required for direct Claude API; not needed when using Bedrock/Vertex
 
-**주요 CLI 인수** (`claude_args`):
+**Main CLI args** (`claude_args`):
 ```yaml
 claude_args: "--max-turns 5 --model claude-sonnet-4-6 --mcp-config /path/to/config.json"
 ```
-- `--max-turns`: 최대 대화 턴 (기본: 10)
-- `--model`: 사용 모델
-- `--mcp-config`: MCP 설정 파일 경로
-- `--allowed-tools`: 허용 도구 쉼표 구분 목록
-- `--debug`: 디버그 출력
+- `--max-turns`: Max conversation turns (default: 10)
+- `--model`: Model to use
+- `--mcp-config`: Path to MCP config file
+- `--allowed-tools`: Comma-separated allowed tools
+- `--debug`: Debug output
 
-#### 사용 예시 (이슈/PR 댓글)
+#### Usage examples (issue/PR comments)
 
 ```text
 @claude implement this feature based on the issue description
@@ -1852,9 +1852,9 @@ claude_args: "--max-turns 5 --model claude-sonnet-4-6 --mcp-config /path/to/conf
 @claude fix the TypeError in the user dashboard component
 ```
 
-#### AWS Bedrock / Google Vertex AI 연동
+#### AWS Bedrock / Google Vertex AI
 
-**AWS Bedrock 워크플로우**:
+**AWS Bedrock workflow**:
 ```yaml
 name: Claude PR Action
 permissions:
@@ -1897,54 +1897,54 @@ jobs:
           use_bedrock: "true"
           claude_args: '--model us.anthropic.claude-sonnet-4-6 --max-turns 10'
 ```
-> Bedrock 모델 ID는 리전 접두사 포함: `us.anthropic.claude-sonnet-4-6`
+> Bedrock model ID includes region prefix: `us.anthropic.claude-sonnet-4-6`
 
-**Google Vertex AI**: GCP Workload Identity Federation으로 인증. `use_vertex: "true"` 설정, `ANTHROPIC_VERTEX_PROJECT_ID`, `CLOUD_ML_REGION` 환경변수 필요.
+**Google Vertex AI**: Authenticate via GCP Workload Identity Federation. Set `use_vertex: "true"`, env vars `ANTHROPIC_VERTEX_PROJECT_ID`, `CLOUD_ML_REGION` required.
 
-#### 비용 고려사항
+#### Cost considerations
 
-| 비용 항목 | 설명 |
-|-----------|------|
-| GitHub Actions 분 | GitHub-hosted runner 컴퓨트 시간 소비 |
-| API 토큰 | 프롬프트/응답 길이에 따른 토큰 비용 |
+| Cost item | Description |
+|-----------|-------------|
+| GitHub Actions minutes | Compute time on GitHub-hosted runner |
+| API tokens | Token cost by prompt/response length |
 
-**최적화 팁**:
-- 구체적인 `@claude` 명령으로 불필요한 API 호출 줄이기
-- `--max-turns`로 과도한 반복 방지
-- 워크플로우 수준 timeout으로 폭주 작업 방지
-- GitHub concurrency control로 병렬 실행 제한
+**Optimization tips**:
+- Use specific `@claude` commands to reduce unnecessary API calls
+- Use `--max-turns` to avoid excessive iteration
+- Workflow-level timeout to prevent runaway jobs
+- GitHub concurrency control to limit parallel runs
 
-#### 트러블슈팅
+#### Troubleshooting
 
-| 문제 | 확인사항 |
-|------|---------|
-| `@claude` 응답 없음 | GitHub App 설치 확인, 워크플로우 활성화, API 키 시크릿 확인, `/claude` 아닌 `@claude` 사용 확인 |
-| Claude 커밋에 CI 미실행 | GitHub App 사용 확인 (기본 Actions 사용자 아님), 워크플로우 트리거 이벤트 확인 |
-| 인증 에러 | API 키 유효성/권한 확인, Bedrock/Vertex 자격증명 설정 확인 |
+| Issue | Check |
+|-------|-------|
+| No response to `@claude` | GitHub App installed, workflow enabled, API key secret set, use `@claude` not `/claude` |
+| CI not running on Claude commits | Confirm GitHub App (not default Actions user), workflow trigger events |
+| Auth error | API key validity/permissions, Bedrock/Vertex credentials |
 
 ---
 
 ### GitLab CI/CD
 
-> 베타 상태. GitLab이 유지보수. [GitLab issue](https://gitlab.com/gitlab-org/gitlab/-/issues/573776) 참고.
+> Beta. Maintained by GitLab. See [GitLab issue](https://gitlab.com/gitlab-org/gitlab/-/issues/573776).
 
-#### 핵심 개념
+#### Key concepts
 
-- `@claude` 멘션으로 이슈/MR에서 코드 구현, MR 생성, 버그 수정
-- 격리된 컨테이너에서 샌드박스 실행
-- Claude API, AWS Bedrock, Google Vertex AI 모두 지원
-- 모든 변경은 MR을 통해 리뷰 가능
+- `@claude` mention in issue/MR for implementation, MR creation, bug fixes
+- Runs in isolated container sandbox
+- Claude API, AWS Bedrock, Google Vertex AI all supported
+- All changes reviewable via MR
 
-#### 동작 방식
+#### How it works
 
-1. **이벤트 기반**: `@claude` 댓글 → 컨텍스트 수집 → 프롬프트 구성 → Claude Code 실행
-2. **프로바이더 추상화**: Claude API (SaaS) / AWS Bedrock / Google Vertex AI 선택
-3. **샌드박스 실행**: 격리 컨테이너, 네트워크/파일시스템 제한, workspace 범위 권한
+1. **Event-driven**: `@claude` comment → gather context → build prompt → run Claude Code
+2. **Provider abstraction**: Choose Claude API (SaaS) / AWS Bedrock / Google Vertex AI
+3. **Sandbox execution**: Isolated container, network/filesystem limits, workspace-scoped permissions
 
-#### 빠른 설정
+#### Quick setup
 
-1. **Settings → CI/CD → Variables**에서 `ANTHROPIC_API_KEY` 추가 (masked)
-2. `.gitlab-ci.yml`에 Claude job 추가:
+1. Add `ANTHROPIC_API_KEY` in **Settings → CI/CD → Variables** (masked)
+2. Add Claude job to `.gitlab-ci.yml`:
 
 ```yaml
 stages:
@@ -1972,7 +1972,7 @@ claude:
       --debug
 ```
 
-#### AWS Bedrock 워크플로우 (OIDC)
+#### AWS Bedrock workflow (OIDC)
 
 ```yaml
 claude-bedrock:
@@ -2007,9 +2007,9 @@ claude-bedrock:
     AWS_REGION: "us-west-2"
 ```
 
-필요 CI/CD Variables: `AWS_ROLE_TO_ASSUME`, `AWS_REGION`
+Required CI/CD Variables: `AWS_ROLE_TO_ASSUME`, `AWS_REGION`
 
-#### Google Vertex AI 워크플로우 (WIF)
+#### Google Vertex AI workflow (WIF)
 
 ```yaml
 claude-vertex:
@@ -2044,9 +2044,9 @@ claude-vertex:
     CLOUD_ML_REGION: "us-east5"
 ```
 
-필요 CI/CD Variables: `GCP_WORKLOAD_IDENTITY_PROVIDER`, `GCP_SERVICE_ACCOUNT`, `CLOUD_ML_REGION`
+Required CI/CD Variables: `GCP_WORKLOAD_IDENTITY_PROVIDER`, `GCP_SERVICE_ACCOUNT`, `CLOUD_ML_REGION`
 
-#### 사용 예시 (이슈/MR 댓글)
+#### Usage examples (issue/MR comments)
 
 ```text
 @claude implement this feature based on the issue description
@@ -2054,294 +2054,294 @@ claude-vertex:
 @claude fix the TypeError in the user dashboard component
 ```
 
-#### 보안 & 거버넌스
+#### Security & governance
 
-- 각 job은 격리된 컨테이너에서 실행 (네트워크/파일시스템 제한)
-- 모든 변경은 MR을 통해 리뷰어가 diff 확인
-- Branch protection 및 approval 규칙이 AI 생성 코드에도 적용
-- Workspace 범위 권한으로 쓰기 제한
-- 본인의 프로바이더 자격증명 사용으로 비용 통제
+- Each job runs in isolated container (network/filesystem limits)
+- All changes reviewed via MR (reviewer sees diff)
+- Branch protection and approval rules apply to AI-generated code
+- Write scope limited by workspace permissions
+- Use your own provider credentials for cost control
 
-#### 트러블슈팅
+#### Troubleshooting
 
-| 문제 | 확인사항 |
-|------|---------|
-| `@claude` 응답 없음 | 파이프라인 트리거 확인, CI/CD Variables 존재 확인, `@claude` 사용 (`/claude` 아님) |
-| 댓글/MR 작성 불가 | `CI_JOB_TOKEN` 권한 확인 또는 `api` scope PAT 사용, `mcp__gitlab` 도구 활성화 확인 |
-| 인증 에러 | API 키 유효성 확인, OIDC/WIF 설정 확인, 리전/모델 가용성 확인 |
-
----
-
-### GitHub Actions vs GitLab CI/CD 비교
-
-| 측면 | GitHub Actions | GitLab CI/CD |
-|------|---------------|-------------|
-| 상태 | GA (v1) | 베타 |
-| 유지보수 | Anthropic | GitLab |
-| 설정 방식 | `/install-github-app` 또는 수동 | `.gitlab-ci.yml` 직접 작성 |
-| 트리거 | `@claude` 멘션 자동 감지 | 웹훅/파이프라인 트리거 설정 필요 |
-| Action/Job | `anthropics/claude-code-action@v1` | 직접 `claude` CLI 실행 |
-| 프로바이더 | Claude API, Bedrock, Vertex | Claude API, Bedrock, Vertex |
-| 보안 | GitHub Secrets + App 권한 | CI/CD Variables + 컨테이너 격리 |
+| Issue | Check |
+|-------|-------|
+| No response to `@claude` | Pipeline trigger, CI/CD Variables present, use `@claude` not `/claude` |
+| Cannot post comments/MR | `CI_JOB_TOKEN` permissions or `api` scope PAT, `mcp__gitlab` tool enabled |
+| Auth error | API key validity, OIDC/WIF setup, region/model availability |
 
 ---
 
-## 14. Slack 통합
+### GitHub Actions vs GitLab CI/CD
 
-> 문서: https://code.claude.com/docs/en/slack
+| Aspect | GitHub Actions | GitLab CI/CD |
+|--------|----------------|--------------|
+| Status | GA (v1) | Beta |
+| Maintainer | Anthropic | GitLab |
+| Setup | `/install-github-app` or manual | Edit `.gitlab-ci.yml` |
+| Trigger | `@claude` mention auto-detected | Webhook/pipeline trigger config |
+| Action/Job | `anthropics/claude-code-action@v1` | Run `claude` CLI directly |
+| Providers | Claude API, Bedrock, Vertex | Claude API, Bedrock, Vertex |
+| Security | GitHub Secrets + App permissions | CI/CD Variables + container isolation |
+
+---
+
+## 14. Slack integration
+
+> Docs: https://code.claude.com/docs/en/slack
 > Slack Marketplace: https://slack.com/marketplace/A08SF47R6P4
 
-### 핵심 개념
+### Key concepts
 
-- `@Claude` 멘션 → 코딩 의도 자동 감지 → Claude Code 웹 세션 생성
-- Slack 대화 컨텍스트를 활용한 코딩 작업 위임
-- 기존 Claude for Slack 앱 위에 구축, 코딩 요청을 Claude Code 웹으로 라우팅
+- `@Claude` mention → coding intent detected → Claude Code web session created
+- Delegate coding work using Slack conversation context
+- Built on Claude for Slack; routes coding requests to Claude Code web
 
-### 전제 조건
+### Prerequisites
 
-| 요구사항 | 상세 |
-|---------|------|
-| Claude 플랜 | Pro, Max, Teams, Enterprise (Claude Code 접근 포함, premium seats) |
-| Claude Code 웹 | [claude.ai/code](https://claude.ai/code) 접근 활성화 필요 |
-| GitHub 계정 | Claude Code 웹에 연결, 최소 1개 레포 인증 |
-| Slack 인증 | Slack 계정과 Claude 계정 연결 |
+| Requirement | Details |
+|-------------|---------|
+| Claude plan | Pro, Max, Teams, Enterprise (includes Claude Code access, premium seats) |
+| Claude Code web | [claude.ai/code](https://claude.ai/code) access must be enabled |
+| GitHub account | Linked in Claude Code web, at least one repo authorized |
+| Slack auth | Slack account linked to Claude account |
 
-### 설정 방법
+### Setup
 
-1. **Slack App 설치**: 워크스페이스 관리자가 [Slack App Marketplace](https://slack.com/marketplace/A08SF47R6P4)에서 설치
-2. **Claude 계정 연결**: Slack → Apps → Claude → App Home → "Connect" 클릭
-3. **Claude Code 웹 설정**: [claude.ai/code](https://claude.ai/code) 접속 → GitHub 계정 연결 → 레포 인증
-4. **라우팅 모드 선택**: App Home에서 설정
-5. **채널에 추가**: `/invite @Claude`로 원하는 채널에 초대 (자동 추가 안 됨)
+1. **Install Slack app**: Workspace admin installs from [Slack App Marketplace](https://slack.com/marketplace/A08SF47R6P4)
+2. **Connect Claude**: Slack → Apps → Claude → App Home → click "Connect"
+3. **Claude Code web**: Go to [claude.ai/code](https://claude.ai/code) → connect GitHub → authorize repos
+4. **Routing mode**: Set in App Home
+5. **Add to channel**: `/invite @Claude` in desired channel (not added automatically)
 
-### 라우팅 모드
+### Routing modes
 
-| 모드 | 동작 |
-|------|------|
-| **Code only** | 모든 `@Claude` 멘션을 Claude Code 세션으로 라우팅. 개발 전용 팀에 적합 |
-| **Code + Chat** | 메시지 분석 후 코딩 작업은 Claude Code로, 일반 질문은 Claude Chat으로 지능적 라우팅 |
+| Mode | Behavior |
+|------|----------|
+| **Code only** | Route all `@Claude` mentions to Claude Code. Best for dev-only teams |
+| **Code + Chat** | Analyze message; route coding to Claude Code, general Qs to Claude Chat |
 
-> Code + Chat 모드에서 잘못 라우팅된 경우: "Retry as Code" 또는 Chat 선택 가능
+> If misrouted in Code + Chat: use "Retry as Code" or choose Chat
 
-### 동작 흐름
+### Flow
 
-1. **시작**: `@Claude` 멘션으로 코딩 요청
-2. **감지**: Claude가 메시지 분석 → 코딩 의도 감지
-3. **세션 생성**: claude.ai/code에 새 Claude Code 세션 생성
-4. **진행 업데이트**: Slack 스레드에 상태 업데이트 게시
-5. **완료**: 요약 + 액션 버튼과 함께 `@멘션`으로 알림
-6. **리뷰**: "View Session"으로 전체 기록 확인, "Create PR"로 풀 리퀘스트 생성
+1. **Start**: Coding request via `@Claude` mention
+2. **Detect**: Claude analyzes message → detects coding intent
+3. **Session**: New Claude Code session at claude.ai/code
+4. **Updates**: Post status to Slack thread
+5. **Done**: Notify with @mention + summary + action buttons
+6. **Review**: "View Session" for full history, "Create PR" for pull request
 
-### 컨텍스트 수집
+### Context collection
 
-| 출처 | 동작 |
-|------|------|
-| **스레드** | 스레드의 모든 메시지에서 컨텍스트 수집 |
-| **채널** | 채널의 최근 메시지에서 관련 컨텍스트 수집 |
+| Source | Behavior |
+|--------|----------|
+| **Thread** | Collect context from all messages in thread |
+| **Channel** | Collect from recent channel messages |
 
-> 주의: `@Claude` 호출 시 대화 컨텍스트에 접근. 신뢰할 수 있는 Slack 대화에서만 사용.
+> Note: `@Claude` has access to conversation context. Use only in trusted Slack channels.
 
-### UI 요소
+### UI actions
 
-| 액션 | 기능 |
-|------|------|
-| **View Session** | 브라우저에서 전체 Claude Code 세션 열기 (기록 확인, 계속, 추가 요청) |
-| **Create PR** | 세션 변경사항으로 PR 바로 생성 |
-| **Retry as Code** | Chat으로 라우팅된 것을 Code 세션으로 재시도 |
-| **Change Repo** | Claude가 잘못 선택한 레포 변경 |
+| Action | Purpose |
+|--------|---------|
+| **View Session** | Open full Claude Code session in browser (history, continue, more requests) |
+| **Create PR** | Create PR from session changes |
+| **Retry as Code** | Retry in Code session if routed to Chat |
+| **Change Repo** | Change repo Claude selected |
 
-### 접근 권한
+### Access
 
-**사용자 수준**:
-| 접근 유형 | 설명 |
-|----------|------|
-| 세션 | 각 사용자 본인의 Claude 계정으로 실행 |
-| 사용량/Rate Limit | 개인 플랜 한도에 포함 |
-| 레포 접근 | 본인이 연결한 레포만 접근 가능 |
-| 세션 기록 | claude.ai/code의 히스토리에 표시 |
+**Per user**:
+| Access type | Description |
+|-------------|-------------|
+| Session | Runs under each user's Claude account |
+| Usage / rate limit | Counts toward personal plan |
+| Repo access | Only repos user has connected |
+| Session history | Shown in claude.ai/code history |
 
-**워크스페이스 수준**:
-- 워크스페이스 관리자가 Claude 앱 설치/제거 제어
-- Enterprise Grid: 조직 관리자가 워크스페이스별 접근 제어
-- 앱 제거 시 해당 워크스페이스 전체 사용자 접근 즉시 해제
+**Workspace**:
+- Workspace admin controls install/removal of Claude app
+- Enterprise Grid: org admin controls per-workspace access
+- Removing app revokes access for all users in that workspace
 
-**채널 기반 접근 제어**:
-- Claude는 초대된 채널에서만 응답 (`/invite @Claude`)
-- 공개/비공개 채널 모두 지원
-- 관리자가 채널 접근 관리로 Claude Code 사용 제한 가능
+**Channel-based**:
+- Claude responds only in channels where invited (`/invite @Claude`)
+- Public and private channels supported
+- Admin can limit Claude Code use via channel access
 
-### 활용 사례
+### Use cases
 
-| 사례 | 설명 |
-|------|------|
-| 버그 조사/수정 | Slack 채널에 보고된 버그 즉시 조사 및 수정 |
-| 코드 리뷰/수정 | 팀 피드백 기반 소규모 기능 구현, 리팩토링 |
-| 협업 디버깅 | 에러 재현, 사용자 리포트 등 팀 토론 컨텍스트 활용 |
-| 병렬 작업 | Slack에서 코딩 작업 시작 → 다른 작업 계속 → 완료 시 알림 |
+| Case | Description |
+|------|-------------|
+| Bug investigation/fix | Investigate and fix bugs reported in Slack |
+| Code review/edits | Small features, refactors based on team feedback |
+| Collaborative debugging | Use team discussion (repro, user reports) as context |
+| Parallel work | Start coding from Slack → do other work → get notified when done |
 
-### Slack vs 웹 직접 사용
+### Slack vs using web directly
 
-| Slack 사용 | 웹 직접 사용 |
-|-----------|------------|
-| 컨텍스트가 이미 Slack 토론에 있을 때 | 파일 업로드가 필요할 때 |
-| 비동기 작업 시작 시 | 개발 중 실시간 상호작용 필요 시 |
-| 팀원 가시성이 필요할 때 | 길고 복잡한 작업 시 |
+| Use Slack when | Use web when |
+|-----------------|--------------|
+| Context is already in Slack | You need to upload files |
+| Starting work asynchronously | You need real-time interaction while developing |
+| Team visibility matters | Long or complex tasks |
 
-### 효과적인 요청 작성
+### Writing effective requests
 
-- **구체적으로**: 파일명, 함수명, 에러 메시지 포함
-- **컨텍스트 제공**: 레포나 프로젝트 명시 (대화에서 불분명할 경우)
-- **성공 정의**: 테스트 작성? 문서 업데이트? PR 생성?
-- **스레드 활용**: 버그/기능 논의 시 스레드 사용 → Claude가 전체 컨텍스트 수집
+- **Be specific**: Include file names, function names, error messages
+- **Provide context**: Specify repo/project if unclear from conversation
+- **Define success**: Tests? Docs? PR?
+- **Use threads**: Discuss bug/feature in thread → Claude gets full context
 
-### 현재 제한사항
+### Current limitations
 
-- **GitHub만 지원**: 현재 GitHub 레포만 가능
-- **PR 1개**: 세션당 하나의 PR 생성
-- **Rate Limit**: 개인 Claude 플랜 한도 적용
-- **웹 접근 필수**: Claude Code 웹 접근 없으면 일반 Claude Chat 응답만
-- **DM 미지원**: 채널에서만 작동 (공개/비공개 모두 가능)
+- **GitHub only**: Only GitHub repos supported
+- **One PR**: One PR per session
+- **Rate limit**: Personal Claude plan limits apply
+- **Web access required**: Without Claude Code web access you only get Claude Chat
+- **No DMs**: Works in channels only (public or private)
 
-### 트러블슈팅
+### Troubleshooting
 
-| 문제 | 해결 |
-|------|------|
-| 세션 시작 안 됨 | App Home에서 Claude 계정 연결 확인 → 웹 접근 확인 → GitHub 레포 연결 확인 |
-| 레포 안 보임 | claude.ai/code에서 레포 연결 → GitHub 권한 확인 → GitHub 계정 재연결 |
-| 잘못된 레포 선택 | "Change Repo" 버튼 → 요청에 레포명 포함 |
-| 인증 에러 | App Home에서 연결 해제/재연결 → 올바른 Claude 계정 확인 → Claude Code 접근 포함 플랜 확인 |
-
----
-
-# 부록
+| Issue | Fix |
+|-------|-----|
+| Session not starting | Check Claude account connection in App Home → web access → GitHub repo connection |
+| Repo not visible | Connect repo at claude.ai/code → check GitHub permissions → reconnect GitHub |
+| Wrong repo selected | "Change Repo" button → include repo name in request |
+| Auth error | Disconnect/reconnect in App Home → correct Claude account → plan includes Claude Code access |
 
 ---
 
-## 부록 A: 기능 선택 가이드 (언제 뭘 쓸까?)
+# Appendix
 
-| 니즈 | 사용 기능 | 이유 |
-|------|-----------|------|
-| "항상 따라야 할 규칙" | **CLAUDE.md** | 매 세션 자동 로드, "Always do X" |
-| "필요할 때 로드하는 참고/워크플로우" | **Skills** | 온디맨드 로드, `/<name>` 호출 |
-| "외부 시스템 연결" | **MCP** | Jira, Slack, DB 등 외부 도구 |
-| "병렬 격리 작업" | **Subagents** | 독립 컨텍스트, 메인 오염 방지 |
-| "확정적 자동화 (LLM 판단 없이)" | **Hooks** | 이벤트 기반 확정적 실행 |
-| "토론/협업 필요한 복잡한 작업" | **Agent Teams** | 팀원 간 직접 통신, 자율 조율 |
-| "재사용/공유/배포" | **Plugins** | 패키징 단위, 버전 관리 |
-| "CI/CD에서 비대화형 실행" | **Headless (`-p`)** | 프로그래밍 방식 실행 |
+---
 
-### 의사결정 트리
+## Appendix A: Feature selection guide (when to use what?)
+
+| Need | Use | Why |
+|------|-----|-----|
+| "Rules that always apply" | **CLAUDE.md** | Loaded every session, "Always do X" |
+| "Reference/workflow when needed" | **Skills** | On-demand load, `/<name>` invocation |
+| "Connect external systems" | **MCP** | Jira, Slack, DB, etc. |
+| "Parallel isolated work" | **Subagents** | Own context, avoid polluting main |
+| "Deterministic automation (no LLM)" | **Hooks** | Event-based, deterministic |
+| "Complex work needing discussion/collab" | **Agent Teams** | Teammates talk directly, self-coordinate |
+| "Reuse/share/ship" | **Plugins** | Packaging, versioning |
+| "Non-interactive in CI/CD" | **Headless (`-p`)** | Programmatic execution |
+
+### Decision tree
 
 ```
-지시사항을 만들고 싶다
-├── 항상 적용? → CLAUDE.md
-├── 특정 경로에만? → .claude/rules/*.md
-├── 필요할 때만? → Skills
-└── 여러 프로젝트에 공유? → Plugins
+Want to add instructions
+├── Always apply? → CLAUDE.md
+├── Only for certain paths? → .claude/rules/*.md
+├── Only when needed? → Skills
+└── Share across projects? → Plugins
 
-작업을 자동화하고 싶다
-├── LLM 판단 필요 없이 확정적? → Hooks
-├── 외부 시스템과 연결? → MCP
-├── 독립적 탐색/작업? → Subagents
-└── 팀 협업 필요? → Agent Teams
+Want to automate
+├── Deterministic, no LLM? → Hooks
+├── Connect external systems? → MCP
+├── Isolated exploration/work? → Subagents
+└── Team collaboration? → Agent Teams
 
-CI/CD에서 실행하고 싶다
+Run in CI/CD
 └── Headless (-p) + --allowedTools
 ```
 
 ---
 
-## 부록 B: 컨텍스트 최적화 전략
+## Appendix B: Context optimization
 
-### 기능별 로드 시점/비용
+### Load timing/cost by feature
 
-| 기능 | 로드 시점 | 컨텍스트 비용 |
-|------|----------|-------------|
-| CLAUDE.md | 매 세션 시작 | 전체 내용 (500줄 이하 유지!) |
-| Auto Memory (MEMORY.md) | 매 세션 시작 | 첫 200줄만 |
-| Skills (설명문) | 매 세션 시작 | 컨텍스트 2% (폴백 16K자) |
-| Skills (전체 내용) | 호출 시 | 호출된 스킬만큼 |
-| Subagents | 위임 시 | 메인에 결과만 반환 (격리) |
-| Rules (`.claude/rules/`) | 해당 경로 파일 작업 시 | 매칭된 규칙만큼 |
-| Hooks | 이벤트 발생 시 | 없음 (외부 실행) |
-| MCP 도구 목록 | 세션 시작 | Tool Search로 최적화 가능 |
+| Feature | When loaded | Context cost |
+|---------|-------------|---------------|
+| CLAUDE.md | Every session start | Full content (keep under 500 lines!) |
+| Auto Memory (MEMORY.md) | Every session start | First 200 lines only |
+| Skills (description) | Every session start | 2% of context (fallback 16K chars) |
+| Skills (full content) | On invocation | Per invoked skill |
+| Subagents | On delegation | Main gets result only (isolated) |
+| Rules (`.claude/rules/`) | When working on matching path | Per matched rules |
+| Hooks | On event | None (external execution) |
+| MCP tool list | Session start | Optimizable via Tool Search |
 
-### 핵심 원칙
+### Principles
 
-1. **CLAUDE.md 500줄 이하 유지** — 참고자료는 Skills로 분리
-2. **관련 없는 작업 사이에 `/clear`** — 컨텍스트 오염 방지
-3. **대량 출력 작업은 Subagent로 격리** — 메인 컨텍스트 보호
-4. **경로 조건부 Rules 활용** — 불필요한 규칙 로드 방지
-5. **`/compact <지시>` 적극 활용** — 중간 정리
-6. **MCP Tool Search 활성화** — 도구 10개 이상일 때
+1. **Keep CLAUDE.md under 500 lines** — Move reference material to Skills
+2. **`/clear` between unrelated tasks** — Avoid context pollution
+3. **Isolate heavy output in Subagent** — Protect main context
+4. **Use path-conditional Rules** — Avoid loading unnecessary rules
+5. **Use `/compact <instructions>`** — Mid-session cleanup
+6. **Enable MCP Tool Search** — When you have 10+ tools
 
 ---
 
-## 부록 C: 기능 간 비교 매트릭스
+## Appendix C: Feature comparison matrix
 
 ### Skills vs Subagents
 
-| 측면 | Skills | Subagents |
-|------|--------|-----------|
-| 정체 | 재사용 가능한 지시/지식/워크플로우 | 격리된 작업자 (자체 컨텍스트) |
-| 핵심 이점 | 컨텍스트 간 콘텐츠 공유 | 컨텍스트 격리 |
-| 적합 | 참고자료, 호출 가능한 워크플로우 | 많은 파일 읽기, 병렬 작업 |
+| Aspect | Skills | Subagents |
+|--------|--------|-----------|
+| Identity | Reusable instructions/knowledge/workflow | Isolated worker (own context) |
+| Main benefit | Share content across context | Context isolation |
+| Best for | Reference, invokable workflows | Lots of file reads, parallel work |
 
 ### CLAUDE.md vs Skills
 
-| 측면 | CLAUDE.md | Skills |
-|------|-----------|--------|
-| 로드 | 매 세션, 자동 | 온디맨드 |
-| 워크플로우 트리거 | 불가 | `/<name>`으로 가능 |
-| 적합 | "항상 X 하라" 규칙 | 참고자료, 호출 가능한 워크플로우 |
+| Aspect | CLAUDE.md | Skills |
+|--------|-----------|--------|
+| Load | Every session, automatic | On-demand |
+| Workflow trigger | No | `/<name>` |
+| Best for | "Always do X" rules | Reference, invokable workflows |
 
-**경험 법칙**: CLAUDE.md는 ~500줄 이하. 그 이상은 Skills로 분리.
+**Rule of thumb**: Keep CLAUDE.md under ~500 lines. Beyond that, split into Skills.
 
 ### Subagents vs Agent Teams
 
-| 측면 | Subagents | Agent Teams |
-|------|-----------|-------------|
-| 통신 | 메인에게만 보고 | 팀원끼리 직접 메시지 |
-| 조율 | 메인이 관리 | 공유 태스크 리스트 |
-| 비용 | 낮음 | 높음 |
-| 적합 | 결과만 중요한 집중 작업 | 토론/협업 필요한 복잡한 작업 |
+| Aspect | Subagents | Agent Teams |
+|--------|-----------|-------------|
+| Communication | Report to main only | Teammates message each other |
+| Coordination | Main manages | Shared task list |
+| Cost | Lower | Higher |
+| Best for | Focused work where only result matters | Complex work needing discussion/collab |
 
 ### MCP vs Skills
 
-| 측면 | MCP | Skills |
-|------|-----|--------|
-| 목적 | 외부 서비스 연결 (API) | 내부 지시/워크플로우 |
-| 실행 | 도구 호출 (외부 서버) | 프롬프트 주입 |
-| 예시 | Jira 이슈 읽기, DB 쿼리 | 코드 리뷰 체크리스트, 배포 가이드 |
+| Aspect | MCP | Skills |
+|--------|-----|--------|
+| Purpose | Connect external services (API) | Internal instructions/workflows |
+| Execution | Tool calls (external server) | Prompt injection |
+| Examples | Jira issue read, DB query | Code review checklist, deploy guide |
 
 ### Hooks vs Skills
 
-| 측면 | Hooks | Skills |
-|------|-------|--------|
-| 실행 방식 | 확정적 (LLM 판단 없음) | LLM이 판단/실행 |
-| 트리거 | 이벤트 기반 (자동) | `/명령어` 또는 Claude 자동 호출 |
-| 적합 | 포맷팅, 보호, 알림, 로깅 | 워크플로우, 참고자료, 분석 |
+| Aspect | Hooks | Skills |
+|--------|-------|--------|
+| Execution | Deterministic (no LLM) | LLM decides/runs |
+| Trigger | Event-based (automatic) | `/command` or Claude auto-invocation |
+| Best for | Formatting, protection, notifications, logging | Workflows, reference, analysis |
 
-### 전체 기능 비교 요약
+### Feature comparison summary
 
-| 기능 | 하는 일 | 사용 시점 | 예시 |
-|------|--------|----------|------|
-| CLAUDE.md | 영속 컨텍스트 | "항상 X 하라" 규칙 | "pnpm 사용, npm 말고" |
-| Skill | 지시/지식/워크플로우 | 재사용 콘텐츠, 반복 작업 | `/review`로 코드 리뷰 체크리스트 |
-| Subagent | 격리 실행 컨텍스트 | 컨텍스트 격리, 병렬 작업 | 많은 파일 읽는 리서치 |
-| Agent Teams | 다중 독립 세션 조율 | 병렬 리서치, 경쟁 가설 | 보안/성능/테스트 동시 리뷰 |
-| MCP | 외부 서비스 연결 | 외부 데이터/액션 | DB 쿼리, Slack 포스트 |
-| Hook | 이벤트 기반 스크립트 | 예측 가능한 자동화 | 편집 후 ESLint 실행 |
+| Feature | What it does | When to use | Example |
+|---------|---------------|-------------|---------|
+| CLAUDE.md | Persistent context | "Always do X" rules | "Use pnpm, not npm" |
+| Skill | Instructions/knowledge/workflow | Reuse content, repeat tasks | `/review` for code review checklist |
+| Subagent | Isolated execution context | Context isolation, parallel work | Research that reads many files |
+| Agent Teams | Coordinate multiple sessions | Parallel research, competing hypotheses | Security/perf/test review in parallel |
+| MCP | Connect external services | External data/actions | DB query, Slack post |
+| Hook | Event-based script | Predictable automation | Run ESLint after edit |
 
 ---
 
-## 실습: GitHub Actions + CLAUDE_CODE_OAUTH_TOKEN 설정 (2026-02-28)
+## Hands-on: GitHub Actions + CLAUDE_CODE_OAUTH_TOKEN (2026-02-28)
 
-### 배경
+### Background
 
-`ANTHROPIC_API_KEY` 대신 `CLAUDE_CODE_OAUTH_TOKEN`(Claude.ai 계정 OAuth)으로 인증하는 방식으로 설정.
+Setup uses `CLAUDE_CODE_OAUTH_TOKEN` (Claude.ai account OAuth) for auth instead of `ANTHROPIC_API_KEY`.
 
-### 최종 작동 워크플로우
+### Final working workflow
 
 ```yaml
 name: Claude Code
@@ -2364,7 +2364,7 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
-      id-token: write   # ← CLAUDE_CODE_OAUTH_TOKEN 사용 시 필수
+      id-token: write   # ← Required when using CLAUDE_CODE_OAUTH_TOKEN
     steps:
       - uses: actions/checkout@v4
       - uses: anthropics/claude-code-action@v1
@@ -2373,24 +2373,23 @@ jobs:
           claude_args: "--max-turns 10"
 ```
 
-### 트러블슈팅
+### Troubleshooting
 
-| 에러 | 원인 | 해결 |
-|------|------|------|
-| `Unable to get ACTIONS_ID_TOKEN_REQUEST_URL` | `id-token: write` 권한 누락 | permissions에 `id-token: write` 추가 |
-| `Bad credentials` | OAuth 토큰 미설정 또는 빈 값 | GitHub Secrets에 `CLAUDE_CODE_OAUTH_TOKEN` 등록 확인 |
-| `issue_comment` 이벤트가 구 워크플로우 실행 | main 브랜치 워크플로우 기준으로 트리거됨 | 수정 사항을 반드시 main에 push 후 테스트 |
+| Error | Cause | Fix |
+|-------|-------|-----|
+| `Unable to get ACTIONS_ID_TOKEN_REQUEST_URL` | Missing `id-token: write` permission | Add `id-token: write` to permissions |
+| `Bad credentials` | OAuth token not set or empty | Verify `CLAUDE_CODE_OAUTH_TOKEN` in GitHub Secrets |
+| `issue_comment` runs old workflow | Workflow triggered from main branch | Push changes to main before testing |
 
-### 인증 방식 비교
+### Auth comparison
 
-| 방식 | 시크릿 이름 | 추가 권한 | 특징 |
-|------|------------|-----------|------|
-| API 키 | `ANTHROPIC_API_KEY` | 불필요 | 직접 API 사용 |
-| OAuth 토큰 | `CLAUDE_CODE_OAUTH_TOKEN` | `id-token: write` 필요 | Claude.ai 계정 연동 |
+| Method | Secret name | Extra permission | Notes |
+|--------|-------------|-----------------|-------|
+| API key | `ANTHROPIC_API_KEY` | None | Direct API use |
+| OAuth token | `CLAUDE_CODE_OAUTH_TOKEN` | `id-token: write` required | Claude.ai account link |
 
-### 핵심 교훈
+### Takeaways
 
-- `issue_comment` 이벤트는 **main 브랜치** 워크플로우를 사용 → 수정 후 main에 먼저 반영해야 테스트 가능
-- `CLAUDE_CODE_OAUTH_TOKEN` 사용 시 OIDC 토큰이 필요하므로 `id-token: write` 필수
-- `.claude/settings.json`의 deny 규칙(`git push *`)은 Claude가 직접 push하는 것을 막음 → 의도한 보호 장치
-| Plugin | 패키징 & 배포 | 공유, 버전 관리 | 팀 공통 도구 모음 |
+- `issue_comment` uses the workflow on **main** → push changes to main first to test
+- `CLAUDE_CODE_OAUTH_TOKEN` needs OIDC token → `id-token: write` is required
+- Deny rule in `.claude/settings.json` (`git push *`) blocks Claude from pushing → intended safeguard

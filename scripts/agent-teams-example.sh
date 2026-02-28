@@ -1,18 +1,18 @@
 #!/bin/bash
 # =============================================
-# Phase 4-3: Agent Teams 실습 스크립트
+# Phase 4-3: Agent Teams practice script
 # =============================================
-# 실험적 기능 — 활성화 후 사용
+# Experimental feature — enable before use
 
 # -------------------------------------------
-# 방법 1: 환경변수로 활성화 (1회성)
+# Method 1: Enable via env var (one-time)
 # -------------------------------------------
 CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 claude
 
 # -------------------------------------------
-# 방법 2: settings.json에 영구 설정
+# Method 2: Permanent setting in settings.json
 # -------------------------------------------
-# ~/.claude/settings.json에 추가:
+# Add to ~/.claude/settings.json:
 # {
 #   "env": {
 #     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
@@ -20,30 +20,30 @@ CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 claude
 # }
 
 # -------------------------------------------
-# 활성화 후 사용 예시
+# Usage after enabling
 # -------------------------------------------
-# 세션 안에서:
+# Inside a session:
 #
-# > note.md의 Hooks 섹션과 MCP 섹션을 동시에 리뷰해줘.
-# >   팀원 1: Hooks 섹션 정확성 검증
-# >   팀원 2: MCP 섹션 정확성 검증
-# >   두 결과를 종합해서 리포트 작성
+# > Review the Hooks section and MCP section of note.md simultaneously.
+# >   Teammate 1: Verify Hooks section accuracy
+# >   Teammate 2: Verify MCP section accuracy
+# >   Synthesize both results into a report
 #
-# Claude가 팀을 구성하고 팀원들이 병렬로 작업합니다.
+# Claude forms a team and teammates work in parallel.
 
 # -------------------------------------------
-# 디스플레이 모드
+# Display modes
 # -------------------------------------------
-# in-process: Shift+Down으로 팀원 전환
+# in-process: switch teammates with Shift+Down
 claude --teammate-mode in-process
 
-# split panes: tmux/iTerm2 필요
+# split panes: requires tmux or iTerm2
 # claude --teammate-mode split-panes
 
 # -------------------------------------------
-# 제한사항 (실험적)
+# Limitations (experimental)
 # -------------------------------------------
-# - 세션당 하나의 팀만 가능
-# - 중첩 팀 불가 (팀원이 또 팀 못 만듦)
-# - 세션 재개 시 in-process 팀원 복원 불가
-# - 토큰 비용이 Subagents보다 높음
+# - Only one team per session
+# - No nested teams (teammates can't create teams)
+# - In-process teammates not restored on session resume
+# - Higher token cost than Subagents

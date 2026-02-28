@@ -1,23 +1,23 @@
 ---
 name: summarize
-description: note.md의 특정 기능을 1분 요약으로 압축하는 스킬. 빠른 복습용.
-argument-hint: [기능명 - 예: hooks, mcp, skills]
+description: Compress a specific feature in note.md into a 1-minute summary. Use for quick review.
+argument-hint: [feature-name - e.g. hooks, mcp, skills]
 allowed-tools: Read, Grep
 ---
 
-## 지시사항
+## Instructions
 
-note.md에서 `$ARGUMENTS` 기능에 대한 섹션을 찾아 **1분 안에 읽을 수 있는 요약**을 만드세요.
+Find the section for `$ARGUMENTS` in note.md and create a **summary readable in under 1 minute**.
 
-형식:
+Format:
 ```
-## $ARGUMENTS 1분 요약
+## $ARGUMENTS — 1-Minute Summary
 
-**한줄 정의**: ...
-**핵심 3가지**:
+**One-line definition**: ...
+**Key 3 points**:
 1. ...
 2. ...
 3. ...
-**가장 자주 쓸 패턴**: (코드 예시 1개)
-**주의할 점**: (1줄)
+**Most common pattern**: (one code example)
+**Watch out for**: (one line)
 ```

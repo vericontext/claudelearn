@@ -1,7 +1,7 @@
 ---
 name: hello
-description: 사용자에게 한국어로 친근하게 인사하는 스킬
+description: Greet the user in a friendly way
 ---
 
-사용자에게 한국어로 친근하게 인사하세요.
-현재 프로젝트 이름과 오늘 날짜를 포함하고, 학습 파이트팅 메시지를 추가하세요.
+Greet the user warmly.
+Include the current project name and today's date, and add an encouraging message.

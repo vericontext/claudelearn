@@ -1,26 +1,26 @@
 ---
 name: check-progress
-description: study-guide.md의 학습 진행률을 체크하는 스킬. 진행 상황 확인 시 자동 호출.
+description: Check learning progress in study-guide.md. Auto-invoked when checking progress.
 allowed-tools: Read, Grep, Glob
 ---
 
-## 지시사항
+## Instructions
 
-다음을 수행하세요:
+Do the following:
 
-1. study-guide.md의 체크리스트(`- [ ]`, `- [x]`)를 파싱
-2. 프로젝트 파일 구조를 확인하여 실제 완료 여부 판단
-3. 결과를 다음 형식으로 출력:
+1. Parse the checklists (`- [ ]`, `- [x]`) in study-guide.md
+2. Check the project file structure to verify actual completion
+3. Output results in this format:
 
 ```
-## 학습 진행률
+## Learning Progress
 
-| Phase | 완료 | 전체 | 진행률 |
-|-------|------|------|--------|
+| Phase | Done | Total | Progress |
+|-------|------|-------|----------|
 | 1-1 Memory | ?/5 | 5 | ??% |
 | 1-2 Permissions | ?/4 | 4 | ??% |
 | ...
 
-### 다음 할 일
-- (가장 우선순위 높은 미완료 항목)
+### Next Steps
+- (highest priority incomplete item)
 ```

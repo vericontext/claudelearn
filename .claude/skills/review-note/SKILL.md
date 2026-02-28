@@ -1,20 +1,20 @@
 ---
 name: review-note
-description: note.md의 특정 섹션을 리뷰하고 개선점을 제안하는 스킬. 노트 품질 점검 시 사용.
-argument-hint: [섹션번호 또는 기능명]
+description: Review a specific section of note.md and suggest improvements. Use when checking note quality.
+argument-hint: [section-number or feature-name]
 allowed-tools: Read, Grep, Glob
 ---
 
-## 지시사항
+## Instructions
 
-note.md에서 `$ARGUMENTS`에 해당하는 섹션을 찾아 리뷰하세요.
+Find the section in note.md matching `$ARGUMENTS` and review it.
 
-리뷰 기준:
-1. **정확성**: 공식 문서(note-reference.md)와 비교하여 누락/오류 확인
-2. **실용성**: 실제 사용 시 바로 참고할 수 있는 수준인지
-3. **간결성**: 불필요한 중복이나 장황한 설명이 없는지
+Review criteria:
+1. **Accuracy**: Compare against note-reference.md for missing info or errors
+2. **Practicality**: Is it usable as a quick reference during real work?
+3. **Conciseness**: Any unnecessary repetition or verbose explanations?
 
-결과를 다음 형식으로 출력:
-- 점수: /10
-- 잘한 점: (간단히)
-- 개선 제안: (구체적으로)
+Output format:
+- Score: /10
+- Strengths: (briefly)
+- Suggestions: (specifically)
